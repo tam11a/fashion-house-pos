@@ -1,0 +1,52 @@
+{
+	"name": "fashion-house-erp",
+	"version": "1.0.0",
+	"description": "Headless backend for ERP service of Fashion House Buisiness",
+	"main": "app.js",
+	"scripts": {
+		"dev": "nodemon app.js",
+		"start": "node app.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/tam11a/fashion-house-erp.git"
+	},
+	"author": "tam11a",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/tam11a/fashion-house-erp/issues"
+	},
+	"homepage": "https://github.com/tam11a/fashion-house-erp#readme",
+	"dependencies": {
+		"base32": "0.0.7",
+		"bcryptjs": "2.4.3",
+		"cors": "2.8.5",
+		"dotenv": "16.0.3",
+		"express": "4.18.2",
+		"jsonwebtoken": "9.0.0",
+		"moment": "2.29.4",
+		"mongo-date-query": "1.3.1",
+		"mongoose": "6.9.0",
+		"mongoose-activitylogs": "2.1.15",
+		"mongoose-delete": "0.5.4",
+		"mongoose-paginate-v2": "1.7.1",
+		"mongoose-slug-generator": "1.0.4",
+		"mongoose-subquery": "2.2.6",
+		"multer": "1.4.5-lts.1",
+		"otplib": "12.0.1",
+		"swagger-jsdoc": "6.2.8",
+		"swagger-ui-express": "4.6.0",
+		"uuid": "9.0.0"
+	},
+	"keywords": [
+		"nodejs",
+		"expressjs",
+		"mongoose",
+		"swagger",
+		"swagger-docs"
+	],
+	"devDependencies": {
+		"nodemon": "2.0.20"
+	}
+}
