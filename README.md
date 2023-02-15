@@ -1,4 +1,4 @@
-# Fashion House ERP
+# Fashion House POS
 
 [Headless Backend][repo]
 
