@@ -87,7 +87,7 @@ exports.updateProfile = async (req, res, next) => {
 				salary,
 				bank,
 				bKash,
-				updatedBy: req.user._id,
+				...req.updatedBy,
 			});
 			res.status(201).json({
 				success: true,

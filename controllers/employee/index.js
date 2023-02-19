@@ -17,6 +17,7 @@ exports.register = async (req, res, next) => {
 			phone,
 			email,
 			password,
+			...req.createdBy,
 		});
 
 		// Send Success Response
@@ -68,7 +69,7 @@ exports.getAll = async (req, res, next) => {
 					],
 					select:
 						"userName firstName lastName phone email gender dob hireDate workHour salary bank bKash isActive isVerified createdAt updatedAt deletedAt createdBy updatedBy deletedBy",
-					sort: "-updatedAt -createdAt",
+					sort: req.pagination.sort || "-updatedAt -createdAt",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -137,6 +138,7 @@ exports.activeInactive = async (req, res, next) => {
 
 		await user.updateOne({
 			isActive: !user.isActive,
+			...req.updatedBy,
 		});
 		await user.save();
 
@@ -193,6 +195,7 @@ exports.update = async (req, res, next) => {
 			salary,
 			bank,
 			bKash,
+			...req.updatedBy,
 		});
 
 		if (employee)

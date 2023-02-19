@@ -163,9 +163,9 @@ adminSchema.methods.verifyUser = async function () {
 	await this.save();
 };
 
-adminSchema.virtual("fullName").get(function () {
-	return `${this.firstName} ${this.lastName}`;
-});
+// adminSchema.virtual("fullName").get(function () {
+// 	return `${this.firstName} ${this.lastName}`;
+// });
 
 // adminSchema.pre(/^find/, async function () {
 // 	this.populate("fullName");

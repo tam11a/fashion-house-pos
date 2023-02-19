@@ -27,11 +27,12 @@ const customDefaultFieldsPlugin = (schema) => {
 		this.populate([
 			{
 				path: "createdBy",
-				select: "firstName lastName fullName userName",
+				select: "userName",
+				// select: "firstName lastName fullName userName",
 			},
 			{
 				path: "updatedBy",
-				select: "firstName lastName fullName userName",
+				select: "userName",
 			},
 		]);
 	});

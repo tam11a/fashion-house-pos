@@ -1,22 +1,13 @@
 const express = require("express");
-const { protect } = require("../../middleware/auth");
-const {
-	register,
-	getAll,
-	byID,
-	activeInactive,
-	update,
-} = require("../../controllers/employee");
-const { query } = require("../../middleware/query");
 const router = express.Router();
 
 // Get All API
 /**
  * @swagger
- * /api/employee:
+ * /api/role:
  *  get:
- *    tags: [Employee]
- *    summary: Get All Employees
+ *    tags: [Role]
+ *    summary: Get All Roles
  *    security:
  *      - bearer: []
  *    parameters:
@@ -33,9 +24,6 @@ const router = express.Router();
  *        name: sort
  *        type: string
  *      - in: query
- *        name: isVerified
- *        type: string
- *      - in: query
  *        name: isActive
  *        type: string
  *    responses:
@@ -45,15 +33,14 @@ const router = express.Router();
  *        description: Bad Request
  *
  */
-router.route("/").get(protect, query, getAll);
 
-// Get Employee API
+// Get Role API
 /**
  * @swagger
- * /api/employee/{id}:
+ * /api/role/{id}:
  *  get:
- *    tags: [Employee]
- *    summary: Get Employee Information
+ *    tags: [Role]
+ *    summary: Get Role Information
  *    security:
  *      - bearer: []
  *    parameters:
@@ -61,7 +48,7 @@ router.route("/").get(protect, query, getAll);
  *        name: id
  *        required: true
  *        type: string
- *        description: Employee Id
+ *        description: Role Id
  *    responses:
  *      200:
  *        description: Get successful
@@ -71,15 +58,14 @@ router.route("/").get(protect, query, getAll);
  *        description: Not Found
  *
  */
-router.route("/:employee_id").get(protect, byID);
 
-// Register API
+// Create API
 /**
  * @swagger
- * /api/employee/register:
+ * /api/role:
  *  post:
- *    tags: [Employee]
- *    summary: Register New Employee
+ *    tags: [Role]
+ *    summary: Create new Role
  *    security:
  *      - bearer: []
  *    requestBody:
@@ -87,7 +73,7 @@ router.route("/:employee_id").get(protect, byID);
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Admin'
+ *            $ref: '#/components/schemas/Role'
  *
  *    responses:
  *      201:
@@ -96,41 +82,14 @@ router.route("/:employee_id").get(protect, byID);
  *        description: Bad Request
  *
  */
-router.route("/register").post(protect, register);
-
-// Update Status API
-/**
- * @swagger
- * /api/employee/{id}:
- *  put:
- *    tags: [Employee]
- *    summary: Toggle Employee Status
- *    security:
- *      - bearer: []
- *    parameters:
- *      - in: path
- *        name: id
- *        required: true
- *        type: string
- *        description: Employee Id
- *    responses:
- *      200:
- *        description: Update successful
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
- *
- */
-router.route("/:employee_id").put(protect, activeInactive);
 
 // Update API
 /**
  * @swagger
- * /api/employee/{id}:
+ * /api/role/{id}:
  *  patch:
- *    tags: [Employee]
- *    summary: Update Employee
+ *    tags: [Role]
+ *    summary: Update Role
  *    security:
  *      - bearer: []
  *    parameters:
@@ -138,13 +97,13 @@ router.route("/:employee_id").put(protect, activeInactive);
  *        name: id
  *        required: true
  *        type: string
- *        description: Employee Id
+ *        description: Role Id
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *              $ref: '#/components/schemas/AdminUpdate'
+ *              $ref: '#/components/schemas/RoleUpdate'
  *
  *    responses:
  *      200:
@@ -155,6 +114,5 @@ router.route("/:employee_id").put(protect, activeInactive);
  *        description: Not Found
  *
  */
-router.route("/:employee_id").patch(protect, update);
 
 module.exports = router;

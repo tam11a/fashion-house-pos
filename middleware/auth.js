@@ -30,6 +30,12 @@ exports.protect = async (req, _res, next) => {
 		if (!user) return next(new ErrorResponse("Unauthorized user!", 401));
 
 		req.user = user;
+		req.createdBy = {
+			createdBy: user._id,
+		};
+		req.updatedBy = {
+			updatedBy: user._id,
+		};
 		next();
 	} catch (error) {
 		// error

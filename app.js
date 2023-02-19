@@ -25,7 +25,12 @@ const swaggerOptions = {
 			version: "1.0.0",
 		},
 	},
-	apis: ["app.js", "./routes/*/*.js", "./middleware/*.js", "./models/*/*.js"],
+	apis: [
+		"app.js",
+		"./routes/**/*.js",
+		"./middleware/**/*.js",
+		"./models/**/*.js",
+	],
 };
 
 app.use(
