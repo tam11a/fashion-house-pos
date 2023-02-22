@@ -8,7 +8,7 @@ exports.query = async (req, res, next) => {
 		skip:
 			((page && parseInt(page) > 1 ? parseInt(page) : 1) - 1) *
 			(limit && parseInt(limit) ? parseInt(limit) : 10),
-		sort: sort,
+		sort: sort || "-updatedAt -createdAt",
 	};
 
 	next();

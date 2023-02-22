@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Admin = require("../../models/Admin");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
+const ErrorResponse = require("../../utils/errorResponse");
 
 exports.register = async (req, res, next) => {
 	// Get Values
