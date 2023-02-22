@@ -5,8 +5,16 @@ const ErrorResponse = require("../../utils/errorResponse");
 
 exports.register = async (req, res, next) => {
 	// Get Values
-	const { userName, firstName, lastName, gender, phone, email, password } =
-		req.body;
+	const {
+		userName,
+		firstName,
+		lastName,
+		gender,
+		phone,
+		email,
+		password,
+		role,
+	} = req.body;
 
 	try {
 		// Store Admin to DB
@@ -18,6 +26,7 @@ exports.register = async (req, res, next) => {
 			phone,
 			email,
 			password,
+			role,
 			...req.createdBy,
 		});
 
@@ -60,6 +69,10 @@ exports.getAll = async (req, res, next) => {
 					...req.pagination,
 					populate: [
 						{
+							path: "role",
+							select: "name -createdBy -updatedBy",
+						},
+						{
 							path: "createdBy",
 							select: "firstName lastName fullName userName",
 						},
@@ -69,7 +82,7 @@ exports.getAll = async (req, res, next) => {
 						},
 					],
 					select:
-						"userName firstName lastName phone email gender dob hireDate workHour salary bank bKash isActive isVerified createdAt updatedAt deletedAt createdBy updatedBy deletedBy",
+						"userName firstName lastName phone email gender dob hireDate workHour salary bank bKash role isActive isVerified createdAt updatedAt deletedAt createdBy updatedBy deletedBy",
 					sort: req.pagination.sort || "-updatedAt -createdAt",
 					customLabels: {
 						docs: "data",
@@ -97,9 +110,13 @@ exports.byID = async (req, res, next) => {
 	try {
 		const user = await Admin.findById(employee_id)
 			.select(
-				"userName firstName lastName phone email gender dob hireDate workHour salary bank bKash isActive isVerified createdAt updatedAt deletedAt createdBy updatedBy deletedBy"
+				"userName firstName lastName phone email gender dob hireDate workHour salary bank bKash role isActive isVerified createdAt updatedAt deletedAt createdBy updatedBy deletedBy"
 			)
 			.populate([
+				{
+					path: "role",
+					select: "name -createdBy -updatedBy",
+				},
 				{
 					path: "createdBy",
 					select: "firstName lastName fullName userName",
@@ -178,6 +195,7 @@ exports.update = async (req, res, next) => {
 		salary,
 		bank,
 		bKash,
+		role,
 	} = req.body;
 
 	try {
@@ -196,6 +214,7 @@ exports.update = async (req, res, next) => {
 			salary,
 			bank,
 			bKash,
+			role,
 			...req.updatedBy,
 		});
 

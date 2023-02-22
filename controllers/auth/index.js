@@ -1,6 +1,7 @@
 const base32 = require("base32");
 const Admin = require("../../models/Admin");
 const ErrorResponse = require("../../utils/errorResponse");
+const Role = require("../../models/Role");
 
 exports.login = async (req, res, next) => {
 	const { email, password } = req.body;
@@ -44,12 +45,27 @@ const sendToken = (user, statusCode, res) => {
 };
 
 exports.validate = async (req, res, next) => {
-	if (req.user)
+	if (req.user) {
+		const role = await Role.findById(req.user._doc.role).populate([
+			{
+				path: "permissions",
+				select: "keyword -createdBy -updatedBy",
+			},
+		]);
 		res.json({
 			success: true,
-			data: req.user._doc,
+			data: {
+				...req.user._doc,
+				role: role
+					? {
+							_id: role._id,
+							name: role.name,
+					  }
+					: null,
+				permissions: role?.permissions?.flatMap?.((r) => r.keyword) || [],
+			},
 		});
-	else {
+	} else {
 		next(ErrorResponse("No user found!", 404));
 	}
 };

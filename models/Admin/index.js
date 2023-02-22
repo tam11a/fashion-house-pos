@@ -94,6 +94,12 @@ var adminSchema = new mongoose.Schema(
 			trim: true,
 			select: false,
 		},
+		role: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Role",
+			trim: true,
+			required: [true, "Please select a role for the employee"],
+		},
 		verificationKey: { type: String, select: false, trim: true },
 		isVerified: {
 			type: Boolean,
@@ -195,6 +201,7 @@ module.exports = Admin;
  *        - phone
  *        - email
  *        - password
+ *        - role
  *     properties:
  *       userName:
  *         type: string
@@ -221,6 +228,8 @@ module.exports = Admin;
  *       password:
  *         type: string
  *         minLength: 6
+ *       role:
+ *         type: string
  */
 
 /**
@@ -263,5 +272,7 @@ module.exports = Admin;
  *       bank:
  *         type: string
  *       bKash:
+ *         type: string
+ *       role:
  *         type: string
  */

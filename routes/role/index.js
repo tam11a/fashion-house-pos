@@ -1,4 +1,7 @@
 const express = require("express");
+const { protect } = require("../../middleware/auth");
+const { query } = require("../../middleware/query");
+const { getAll, create, update, byID } = require("../../controllers/role");
 const router = express.Router();
 
 // Get All API
@@ -33,6 +36,7 @@ const router = express.Router();
  *        description: Bad Request
  *
  */
+router.route("/").get(protect, query, getAll);
 
 // Get Role API
 /**
@@ -58,6 +62,7 @@ const router = express.Router();
  *        description: Not Found
  *
  */
+router.route("/:role_id").get(protect, byID);
 
 // Create API
 /**
@@ -82,6 +87,7 @@ const router = express.Router();
  *        description: Bad Request
  *
  */
+router.route("/").post(protect, create);
 
 // Update API
 /**
@@ -114,5 +120,6 @@ const router = express.Router();
  *        description: Not Found
  *
  */
+router.route("/:role_id").patch(protect, update);
 
 module.exports = router;
