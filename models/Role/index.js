@@ -5,7 +5,7 @@ var roleSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			unique: [true, "The Name is already taken"], // One Account with One Username
-			required: [true, "Please Provide a Keyword"], // If Required
+			required: [true, "Please Provide a Name"], // If Required
 			trim: true,
 		},
 		description: {
