@@ -39,6 +39,6 @@ exports.protect = async (req, _res, next) => {
 		next();
 	} catch (error) {
 		// error
-		return next(new ErrorResponse(error));
+		return next(new ErrorResponse("Unauthorized user!", 401));
 	}
 };

@@ -2,15 +2,20 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, create, update } = require("../../controllers/customer");
+const {
+	getAll,
+	byID,
+	create,
+	update,
+} = require("../../controllers/subcategory");
 
 // Get All API
 /**
  * @swagger
- * /api/customer:
+ * /api/subcategory:
  *  get:
- *    tags: [Customer]
- *    summary: Get All Customers
+ *    tags: [Subcategory]
+ *    summary: Get All Subcategorys
  *    security:
  *      - bearer: []
  *    parameters:
@@ -38,13 +43,13 @@ const { getAll, byID, create, update } = require("../../controllers/customer");
  */
 router.route("/").get(protect, query, getAll);
 
-// Get Customer API
+// Get Subcategory API
 /**
  * @swagger
- * /api/customer/{id}:
+ * /api/subcategory/{id}:
  *  get:
- *    tags: [Customer]
- *    summary: Get Customer Information
+ *    tags: [Subcategory]
+ *    summary: Get Subcategory Information
  *    security:
  *      - bearer: []
  *    parameters:
@@ -52,7 +57,7 @@ router.route("/").get(protect, query, getAll);
  *        name: id
  *        required: true
  *        type: string
- *        description: Customer Id
+ *        description: Subcategory Id
  *    responses:
  *      200:
  *        description: Get successful
@@ -62,15 +67,15 @@ router.route("/").get(protect, query, getAll);
  *        description: Not Found
  *
  */
-router.route("/:customer_id").get(protect, byID);
+router.route("/:subcategory_id").get(protect, byID);
 
 // Create API
 /**
  * @swagger
- * /api/customer:
+ * /api/subcategory:
  *  post:
- *    tags: [Customer]
- *    summary: Create new Customer
+ *    tags: [Subcategory]
+ *    summary: Create new Subcategory
  *    security:
  *      - bearer: []
  *    requestBody:
@@ -78,7 +83,7 @@ router.route("/:customer_id").get(protect, byID);
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Customer'
+ *            $ref: '#/components/schemas/Subcategory'
  *
  *    responses:
  *      201:
@@ -92,10 +97,10 @@ router.route("/").post(protect, create);
 // Update API
 /**
  * @swagger
- * /api/customer/{id}:
+ * /api/subcategory/{id}:
  *  patch:
- *    tags: [Customer]
- *    summary: Update Customer
+ *    tags: [Subcategory]
+ *    summary: Update Subcategory
  *    security:
  *      - bearer: []
  *    parameters:
@@ -103,13 +108,13 @@ router.route("/").post(protect, create);
  *        name: id
  *        required: true
  *        type: string
- *        description: Customer Id
+ *        description: Subcategory Id
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *              $ref: '#/components/schemas/CustomerUpdate'
+ *              $ref: '#/components/schemas/SubcategoryUpdate'
  *
  *    responses:
  *      200:
@@ -120,6 +125,6 @@ router.route("/").post(protect, create);
  *        description: Not Found
  *
  */
-router.route("/:customer_id").patch(protect, update);
+router.route("/:subcategory_id").patch(protect, update);
 
 module.exports = router;

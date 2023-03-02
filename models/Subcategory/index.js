@@ -1,50 +1,47 @@
 const mongoose = require("mongoose");
 
-var branchSchema = new mongoose.Schema(
+var subcategorySchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
 			required: [true, "Please Provide a Name"], // If Required
 			trim: true,
 		},
-		address: {
+		description: {
 			type: String,
 			trim: true,
 			default: null,
 		},
-		phone: {
-			type: String,
-			validate: [/01\d{9}$/, "Invalid Phone Number"],
-			required: [true, "Please Provide a Phone Number"],
+		category: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Category",
+			required: [true, "Please Provide Category Id"],
 		},
 	},
 	{ timestamps: true, id: false }
 );
 
-branchSchema.set("toObject", { virtuals: true });
-branchSchema.set("toJSON", { virtuals: true });
+subcategorySchema.set("toObject", { virtuals: true });
+subcategorySchema.set("toJSON", { virtuals: true });
 
-const Branch = mongoose.model("Branch", branchSchema);
-module.exports = Branch;
+const Subcategory = mongoose.model("Subcategory", subcategorySchema);
+module.exports = Subcategory;
 
 /**
  * @swagger
  * components:
  *  schemas:
- *   Branch:
+ *   Subcategory:
  *     type: object
  *     required:
  *        - name
- *        - phone
+ *        - category
  *     properties:
  *       name:
  *         type: string
- *         unique: true
- *       phone:
+ *       description:
  *         type: string
- *         unique: true
- *         pattern: 01\d{9}$
- *       address:
+ *       category:
  *         type: string
  */
 
@@ -52,16 +49,13 @@ module.exports = Branch;
  * @swagger
  * components:
  *  schemas:
- *   BranchUpdate:
+ *   SubcategoryUpdate:
  *     type: object
  *     properties:
  *       name:
  *         type: string
- *         unique: true
- *       phone:
+ *       description:
  *         type: string
- *         unique: true
- *         pattern: 01\d{9}$
- *       address:
+ *       category:
  *         type: string
  */

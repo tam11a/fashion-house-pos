@@ -1,19 +1,23 @@
 const { default: mongoose } = require("mongoose");
-const Role = require("../../models/Role");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
+const Supplier = require("../../models/Supplier");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
-			message: "Role list fetched successfully",
-			...(await Role.paginate(
+			message: "Supplier list fetched successfully",
+			...(await Supplier.paginate(
 				{
 					...(req.search && {
 						$or: [
-							...queryObjectBuilder(req.search, ["name", "description"], true),
+							...queryObjectBuilder(
+								req.search,
+								["name", "phone", "email"],
+								true
+							),
 						],
 					}),
 					...fieldsQuery({
@@ -22,15 +26,7 @@ exports.getAll = async (req, res, next) => {
 				},
 				{
 					...req.pagination,
-					populate: [
-						{
-							path: "permissions",
-							select: "keyword description isActive -createdBy -updatedBy",
-						},
-					],
-					select:
-						"name description permissions createdAt updatedAt createdBy updatedBy",
-					// sort: req.pagination.sort,
+					// select: "name address phone",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -48,21 +44,24 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, permissions } = req.body;
+	const { name, phone, address, email, bank, bKash } = req.body;
 
 	try {
 		// Store Admin to DB
-		const role = await Role.create({
+		const supplier = await Supplier.create({
 			name,
-			description,
-			permissions,
+			phone,
+			address,
+			email,
+			bank,
+			bKash,
 			...req.createdBy,
 		});
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `'${role.name}' is created as a role successfully`,
+			message: `'${supplier.name}' is created as a supplier successfully`,
 		});
 
 		// On Error
@@ -74,29 +73,32 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { supplier_id } = req.params;
 
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!supplier_id || !mongoose.Types.ObjectId.isValid(supplier_id))
+		return next(new ErrorResponse("Please provide valid supplier id", 400));
 
-	const { name, description, permissions } = req.body;
+	const { name, phone, address, email, bank, bKash } = req.body;
 
 	try {
-		// Update role to DB
-		const role = await Role.findByIdAndUpdate(role_id, {
+		// Update supplier to DB
+		const supplier = await Supplier.findByIdAndUpdate(supplier_id, {
 			name,
-			description,
-			permissions,
+			phone,
+			address,
+			email,
+			bank,
+			bKash,
 			...req.updatedBy,
 		});
 
-		if (role)
+		if (supplier)
 			res.status(200).json({
 				success: true,
-				message: "Role informations are updated successfully",
-				// data: role,
+				message: "Supplier informations are updated successfully",
+				// data: supplier,
 			});
-		else return next(new ErrorResponse("Role not found", 404));
+		else return next(new ErrorResponse("Supplier not found", 404));
 
 		// On Error
 	} catch (error) {
@@ -107,18 +109,14 @@ exports.update = async (req, res, next) => {
 
 exports.byID = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { supplier_id } = req.params;
 
 	// mongoose.Types.ObjectId.isValid(id)
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!supplier_id || !mongoose.Types.ObjectId.isValid(supplier_id))
+		return next(new ErrorResponse("Please provide valid supplier id", 400));
 
 	try {
-		const role = await Role.findById(role_id).populate([
-			{
-				path: "permissions",
-				select: "keyword description isActive -createdBy -updatedBy",
-			},
+		const supplier = await Supplier.findById(supplier_id).populate([
 			{
 				path: "createdBy",
 				select: "firstName lastName fullName userName",
@@ -129,11 +127,11 @@ exports.byID = async (req, res, next) => {
 			},
 		]);
 
-		if (!role) return next(new ErrorResponse("No role found", 404));
+		if (!supplier) return next(new ErrorResponse("No supplier found", 404));
 
 		res.status(200).json({
 			success: true,
-			data: role,
+			data: supplier,
 		});
 
 		// On Error

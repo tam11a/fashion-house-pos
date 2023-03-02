@@ -1,3 +1,9 @@
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../../middleware/auth");
+const { query } = require("../../middleware/query");
+const { getAll, byID, create, update } = require("../../controllers/branch");
+
 // Get All API
 /**
  * @swagger
@@ -30,6 +36,7 @@
  *        description: Bad Request
  *
  */
+router.route("/").get(protect, query, getAll);
 
 // Get Branch API
 /**
@@ -56,6 +63,8 @@
  *
  */
 
+router.route("/:branch_id").get(protect, byID);
+
 // Create API
 /**
  * @swagger
@@ -79,6 +88,7 @@
  *        description: Bad Request
  *
  */
+router.route("/").post(protect, create);
 
 // Update API
 /**
@@ -111,3 +121,6 @@
  *        description: Not Found
  *
  */
+router.route("/:branch_id").patch(protect, update);
+
+module.exports = router;

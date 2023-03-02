@@ -1,15 +1,15 @@
 const { default: mongoose } = require("mongoose");
-const Role = require("../../models/Role");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
+const Category = require("../../models/Category");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
-			message: "Role list fetched successfully",
-			...(await Role.paginate(
+			message: "Category list fetched successfully",
+			...(await Category.paginate(
 				{
 					...(req.search && {
 						$or: [
@@ -22,15 +22,7 @@ exports.getAll = async (req, res, next) => {
 				},
 				{
 					...req.pagination,
-					populate: [
-						{
-							path: "permissions",
-							select: "keyword description isActive -createdBy -updatedBy",
-						},
-					],
-					select:
-						"name description permissions createdAt updatedAt createdBy updatedBy",
-					// sort: req.pagination.sort,
+					// select: "name address phone",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -48,21 +40,20 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, permissions } = req.body;
+	const { name, description } = req.body;
 
 	try {
 		// Store Admin to DB
-		const role = await Role.create({
+		const category = await Category.create({
 			name,
 			description,
-			permissions,
 			...req.createdBy,
 		});
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `'${role.name}' is created as a role successfully`,
+			message: `'${category.name}' is created as a category successfully`,
 		});
 
 		// On Error
@@ -74,29 +65,28 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { category_id } = req.params;
 
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!category_id || !mongoose.Types.ObjectId.isValid(category_id))
+		return next(new ErrorResponse("Please provide valid category id", 400));
 
-	const { name, description, permissions } = req.body;
+	const { name, description } = req.body;
 
 	try {
-		// Update role to DB
-		const role = await Role.findByIdAndUpdate(role_id, {
+		// Update category to DB
+		const category = await Category.findByIdAndUpdate(category_id, {
 			name,
 			description,
-			permissions,
 			...req.updatedBy,
 		});
 
-		if (role)
+		if (category)
 			res.status(200).json({
 				success: true,
-				message: "Role informations are updated successfully",
-				// data: role,
+				message: "Category informations are updated successfully",
+				// data: category,
 			});
-		else return next(new ErrorResponse("Role not found", 404));
+		else return next(new ErrorResponse("Category not found", 404));
 
 		// On Error
 	} catch (error) {
@@ -107,18 +97,14 @@ exports.update = async (req, res, next) => {
 
 exports.byID = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { category_id } = req.params;
 
 	// mongoose.Types.ObjectId.isValid(id)
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!category_id || !mongoose.Types.ObjectId.isValid(category_id))
+		return next(new ErrorResponse("Please provide valid category id", 400));
 
 	try {
-		const role = await Role.findById(role_id).populate([
-			{
-				path: "permissions",
-				select: "keyword description isActive -createdBy -updatedBy",
-			},
+		const category = await Category.findById(category_id).populate([
 			{
 				path: "createdBy",
 				select: "firstName lastName fullName userName",
@@ -129,11 +115,11 @@ exports.byID = async (req, res, next) => {
 			},
 		]);
 
-		if (!role) return next(new ErrorResponse("No role found", 404));
+		if (!category) return next(new ErrorResponse("No category found", 404));
 
 		res.status(200).json({
 			success: true,
-			data: role,
+			data: category,
 		});
 
 		// On Error

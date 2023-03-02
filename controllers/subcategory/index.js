@@ -1,15 +1,15 @@
 const { default: mongoose } = require("mongoose");
-const Role = require("../../models/Role");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
+const Subcategory = require("../../models/Subcategory");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
-			message: "Role list fetched successfully",
-			...(await Role.paginate(
+			message: "Subcategory list fetched successfully",
+			...(await Subcategory.paginate(
 				{
 					...(req.search && {
 						$or: [
@@ -22,15 +22,7 @@ exports.getAll = async (req, res, next) => {
 				},
 				{
 					...req.pagination,
-					populate: [
-						{
-							path: "permissions",
-							select: "keyword description isActive -createdBy -updatedBy",
-						},
-					],
-					select:
-						"name description permissions createdAt updatedAt createdBy updatedBy",
-					// sort: req.pagination.sort,
+					// select: "name address phone",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -48,21 +40,21 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, permissions } = req.body;
+	const { name, description, category } = req.body;
 
 	try {
 		// Store Admin to DB
-		const role = await Role.create({
+		const subcategory = await Subcategory.create({
 			name,
 			description,
-			permissions,
+			category,
 			...req.createdBy,
 		});
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `'${role.name}' is created as a role successfully`,
+			message: `'${subcategory.name}' is created as a subcategory successfully`,
 		});
 
 		// On Error
@@ -74,29 +66,29 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { subcategory_id } = req.params;
 
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!subcategory_id || !mongoose.Types.ObjectId.isValid(subcategory_id))
+		return next(new ErrorResponse("Please provide valid subcategory id", 400));
 
-	const { name, description, permissions } = req.body;
+	const { name, description, category } = req.body;
 
 	try {
-		// Update role to DB
-		const role = await Role.findByIdAndUpdate(role_id, {
+		// Update subcategory to DB
+		const subcategory = await Subcategory.findByIdAndUpdate(subcategory_id, {
 			name,
 			description,
-			permissions,
+			category,
 			...req.updatedBy,
 		});
 
-		if (role)
+		if (subcategory)
 			res.status(200).json({
 				success: true,
-				message: "Role informations are updated successfully",
-				// data: role,
+				message: "Subcategory informations are updated successfully",
+				// data: subcategory,
 			});
-		else return next(new ErrorResponse("Role not found", 404));
+		else return next(new ErrorResponse("Subcategory not found", 404));
 
 		// On Error
 	} catch (error) {
@@ -107,17 +99,16 @@ exports.update = async (req, res, next) => {
 
 exports.byID = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { subcategory_id } = req.params;
 
 	// mongoose.Types.ObjectId.isValid(id)
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!subcategory_id || !mongoose.Types.ObjectId.isValid(subcategory_id))
+		return next(new ErrorResponse("Please provide valid subcategory id", 400));
 
 	try {
-		const role = await Role.findById(role_id).populate([
+		const subcategory = await Subcategory.findById(subcategory_id).populate([
 			{
-				path: "permissions",
-				select: "keyword description isActive -createdBy -updatedBy",
+				path: "category",
 			},
 			{
 				path: "createdBy",
@@ -129,11 +120,12 @@ exports.byID = async (req, res, next) => {
 			},
 		]);
 
-		if (!role) return next(new ErrorResponse("No role found", 404));
+		if (!subcategory)
+			return next(new ErrorResponse("No subcategory found", 404));
 
 		res.status(200).json({
 			success: true,
-			data: role,
+			data: subcategory,
 		});
 
 		// On Error

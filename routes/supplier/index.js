@@ -1,3 +1,9 @@
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../../middleware/auth");
+const { query } = require("../../middleware/query");
+const { getAll, byID, create, update } = require("../../controllers/supplier");
+
 // Get All API
 /**
  * @swagger
@@ -30,6 +36,7 @@
  *        description: Bad Request
  *
  */
+router.route("/").get(protect, query, getAll);
 
 // Get Supplier API
 /**
@@ -55,6 +62,7 @@
  *        description: Not Found
  *
  */
+router.route("/:supplier_id").get(protect, byID);
 
 // Create API
 /**
@@ -79,6 +87,7 @@
  *        description: Bad Request
  *
  */
+router.route("/").post(protect, create);
 
 // Update API
 /**
@@ -111,3 +120,6 @@
  *        description: Not Found
  *
  */
+router.route("/:supplier_id").patch(protect, update);
+
+module.exports = router;

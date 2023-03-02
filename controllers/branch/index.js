@@ -1,19 +1,23 @@
 const { default: mongoose } = require("mongoose");
-const Role = require("../../models/Role");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
+const Branch = require("../../models/Branch");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
-			message: "Role list fetched successfully",
-			...(await Role.paginate(
+			message: "Branch list fetched successfully",
+			...(await Branch.paginate(
 				{
 					...(req.search && {
 						$or: [
-							...queryObjectBuilder(req.search, ["name", "description"], true),
+							...queryObjectBuilder(
+								req.search,
+								["name", "address", "phone"],
+								true
+							),
 						],
 					}),
 					...fieldsQuery({
@@ -22,15 +26,7 @@ exports.getAll = async (req, res, next) => {
 				},
 				{
 					...req.pagination,
-					populate: [
-						{
-							path: "permissions",
-							select: "keyword description isActive -createdBy -updatedBy",
-						},
-					],
-					select:
-						"name description permissions createdAt updatedAt createdBy updatedBy",
-					// sort: req.pagination.sort,
+					// select: "name address phone",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -48,21 +44,21 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, permissions } = req.body;
+	const { name, address, phone } = req.body;
 
 	try {
 		// Store Admin to DB
-		const role = await Role.create({
+		const branch = await Branch.create({
 			name,
-			description,
-			permissions,
+			address,
+			phone,
 			...req.createdBy,
 		});
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `'${role.name}' is created as a role successfully`,
+			message: `'${branch.name}' is created as a branch successfully`,
 		});
 
 		// On Error
@@ -74,29 +70,29 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { branch_id } = req.params;
 
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!branch_id || !mongoose.Types.ObjectId.isValid(branch_id))
+		return next(new ErrorResponse("Please provide valid branch id", 400));
 
-	const { name, description, permissions } = req.body;
+	const { name, address, phone } = req.body;
 
 	try {
-		// Update role to DB
-		const role = await Role.findByIdAndUpdate(role_id, {
+		// Update branch to DB
+		const branch = await Branch.findByIdAndUpdate(branch_id, {
 			name,
-			description,
-			permissions,
+			address,
+			phone,
 			...req.updatedBy,
 		});
 
-		if (role)
+		if (branch)
 			res.status(200).json({
 				success: true,
-				message: "Role informations are updated successfully",
-				// data: role,
+				message: "Branch informations are updated successfully",
+				// data: branch,
 			});
-		else return next(new ErrorResponse("Role not found", 404));
+		else return next(new ErrorResponse("Branch not found", 404));
 
 		// On Error
 	} catch (error) {
@@ -107,18 +103,14 @@ exports.update = async (req, res, next) => {
 
 exports.byID = async (req, res, next) => {
 	// Get Values
-	const { role_id } = req.params;
+	const { branch_id } = req.params;
 
 	// mongoose.Types.ObjectId.isValid(id)
-	if (!role_id || !mongoose.Types.ObjectId.isValid(role_id))
-		return next(new ErrorResponse("Please provide valid role id", 400));
+	if (!branch_id || !mongoose.Types.ObjectId.isValid(branch_id))
+		return next(new ErrorResponse("Please provide valid branch id", 400));
 
 	try {
-		const role = await Role.findById(role_id).populate([
-			{
-				path: "permissions",
-				select: "keyword description isActive -createdBy -updatedBy",
-			},
+		const branch = await Branch.findById(branch_id).populate([
 			{
 				path: "createdBy",
 				select: "firstName lastName fullName userName",
@@ -129,11 +121,11 @@ exports.byID = async (req, res, next) => {
 			},
 		]);
 
-		if (!role) return next(new ErrorResponse("No role found", 404));
+		if (!branch) return next(new ErrorResponse("No branch found", 404));
 
 		res.status(200).json({
 			success: true,
-			data: role,
+			data: branch,
 		});
 
 		// On Error

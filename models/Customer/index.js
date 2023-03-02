@@ -10,6 +10,7 @@ var customerSchema = new mongoose.Schema(
 		address: {
 			type: String,
 			trim: true,
+			default: null,
 		},
 		phone: {
 			type: String,
@@ -24,6 +25,7 @@ var customerSchema = new mongoose.Schema(
 				"Invalid Email Address",
 			],
 			trim: true,
+			default: null,
 		},
 		gender: {
 			type: String,
