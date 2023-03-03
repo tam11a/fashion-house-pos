@@ -1,15 +1,15 @@
 const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
-const Subcategory = require("../../models/Subcategory");
+const Product = require("../../models/Product");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
-			message: "Subcategory list fetched successfully",
-			...(await Subcategory.paginate(
+			message: "Product list fetched successfully",
+			...(await Product.paginate(
 				{
 					...(req.search && {
 						$or: [
@@ -23,10 +23,14 @@ exports.getAll = async (req, res, next) => {
 				{
 					...req.pagination,
 					select:
-						"name description category createdBy updatedBy createdAt updatedAt",
+						"name price category subcategory createdBy updatedBy createdAt updatedAt",
 					populate: [
 						{
 							path: "category",
+							select: "name",
+						},
+						{
+							path: "subcategory",
 							select: "name",
 						},
 						{
@@ -55,21 +59,23 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, category } = req.body;
+	const { name, description, category, subcategory, price } = req.body;
 
 	try {
 		// Store Admin to DB
-		const subcategory = await Subcategory.create({
+		const product = await Product.create({
 			name,
 			description,
 			category,
+			subcategory,
+			price,
 			...req.createdBy,
 		});
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `'${subcategory.name}' is created as a subcategory successfully`,
+			message: `'${product.name}' is created as a product successfully`,
 		});
 
 		// On Error
@@ -81,29 +87,31 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
 	// Get Values
-	const { subcategory_id } = req.params;
+	const { product_id } = req.params;
 
-	if (!subcategory_id || !mongoose.Types.ObjectId.isValid(subcategory_id))
-		return next(new ErrorResponse("Please provide valid subcategory id", 400));
+	if (!product_id || !mongoose.Types.ObjectId.isValid(product_id))
+		return next(new ErrorResponse("Please provide valid product id", 400));
 
-	const { name, description, category } = req.body;
+	const { name, description, category, subcategory, price } = req.body;
 
 	try {
-		// Update subcategory to DB
-		const subcategory = await Subcategory.findByIdAndUpdate(subcategory_id, {
+		// Update product to DB
+		const product = await Product.findByIdAndUpdate(product_id, {
 			name,
 			description,
 			category,
+			subcategory,
+			price,
 			...req.updatedBy,
 		});
 
-		if (subcategory)
+		if (product)
 			res.status(200).json({
 				success: true,
-				message: "Subcategory informations are updated successfully",
-				// data: subcategory,
+				message: "Product informations are updated successfully",
+				// data: product,
 			});
-		else return next(new ErrorResponse("Subcategory not found", 404));
+		else return next(new ErrorResponse("Product not found", 404));
 
 		// On Error
 	} catch (error) {
@@ -114,16 +122,21 @@ exports.update = async (req, res, next) => {
 
 exports.byID = async (req, res, next) => {
 	// Get Values
-	const { subcategory_id } = req.params;
+	const { product_id } = req.params;
 
 	// mongoose.Types.ObjectId.isValid(id)
-	if (!subcategory_id || !mongoose.Types.ObjectId.isValid(subcategory_id))
-		return next(new ErrorResponse("Please provide valid subcategory id", 400));
+	if (!product_id || !mongoose.Types.ObjectId.isValid(product_id))
+		return next(new ErrorResponse("Please provide valid product id", 400));
 
 	try {
-		const subcategory = await Subcategory.findById(subcategory_id).populate([
+		const product = await Product.findById(product_id).populate([
 			{
 				path: "category",
+				select: "name",
+			},
+			{
+				path: "subcategory",
+				select: "name",
 			},
 			{
 				path: "createdBy",
@@ -135,12 +148,11 @@ exports.byID = async (req, res, next) => {
 			},
 		]);
 
-		if (!subcategory)
-			return next(new ErrorResponse("No subcategory found", 404));
+		if (!product) return next(new ErrorResponse("No product found", 404));
 
 		res.status(200).json({
 			success: true,
-			data: subcategory,
+			data: product,
 		});
 
 		// On Error
