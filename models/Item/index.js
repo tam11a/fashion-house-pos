@@ -7,10 +7,16 @@ var itemSchema = new mongoose.Schema(
 			ref: "Product",
 			required: [true, "Please Provide Product Id"],
 		},
-		supplier: {
+		// supplier: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: "Supplier",
+		// 	// required: [true, "Please Provide Supplier Id"],
+		// 	default: null,
+		// },
+		shipment: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Supplier",
-			// required: [true, "Please Provide Supplier Id"],
+			ref: "Shipment",
+			required: [true, "Please Provide Shipment Id"],
 			default: null,
 		},
 		branch: {
@@ -19,6 +25,40 @@ var itemSchema = new mongoose.Schema(
 			// required: [true, "Please Provide Branch Id"],
 			default: null,
 		},
+		orderLine: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "OrderLine",
+			// required: [true, "Please Provide Oderline Id"],
+			default: null,
+		},
+		stitch: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Stitch",
+			// required: [true, "Please Provide Stitch Id"],
+			default: null,
+		},
+		otherCosts: [
+			{
+				amount: {
+					type: Number,
+					default: 0
+				},
+				reason: {
+					type: String,
+					default: null
+				},
+				createdBy: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Admin",
+					default: null,
+					select: false,
+				},
+				createdAt: {
+					type: Date,
+					default: null,
+				},
+			}
+		]
 	},
 	{ timestamps: true, id: false }
 );
@@ -36,20 +76,22 @@ module.exports = Item;
  *   Item:
  *     type: object
  *     required:
- *        - name
- *        - category
- *        - subcategory
+ *        - product
  *     properties:
- *       name:
+ *       product:
  *         type: string
- *       description:
+ *         description: product id
+ *       shipment:
  *         type: string
- *       category:
+ *         description: product id
+ *       branch:
  *         type: string
- *       subcategory:
+ *       orderLine:
  *         type: string
- *       price:
- *         type: number
+ *       stitch:
+ *         type: string
+ *       otherCosts:
+ *         type: string
  */
 
 /**
@@ -59,14 +101,37 @@ module.exports = Item;
  *   ItemUpdate:
  *     type: object
  *     properties:
- *       name:
+ *       product:
  *         type: string
- *       description:
+ *         description: product id
+ *       shipment:
  *         type: string
- *       category:
+ *       branch:
  *         type: string
- *       subcategory:
+ *       orderLine:
  *         type: string
- *       price:
- *         type: number
+ *       stitch:
+ *         type: string
+ *       otherCosts:
+ *         type: string
  */
+
+
+// product:
+//  *         type: string
+//  *         description: product id
+//  *       shipment:
+//  *         type: string
+//  *         description: shipment id
+//  *       branch:
+//  *         type: string
+//  *         description: branch id
+//  *       orderLine:
+//  *         type: string
+//  *         description: orderLine id
+//  *       stitch:
+//  *         type: string
+//  *         description: stitch id
+//  *       otherCosts:
+//  *         type: string
+//  *         description: otherCosts id
