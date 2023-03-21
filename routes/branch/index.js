@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, create, update } = require("../../controllers/branch");
+const { getAll, byID, create, update, activeInactive } = require("../../controllers/branch");
 
 // Get All API
 /**
@@ -89,6 +89,32 @@ router.route("/:branch_id").get(protect, byID);
  *
  */
 router.route("/").post(protect, create);
+
+// Update Status API
+/**
+ * @swagger
+ * /api/branch/{id}:
+ *  put:
+ *    tags: [Branch]
+ *    summary: Toggle Branch Status
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Branch Id
+ *    responses:
+ *      200:
+ *        description: Update successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:branch_id").put(protect, activeInactive);
 
 // Update API
 /**

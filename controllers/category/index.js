@@ -95,6 +95,38 @@ exports.update = async (req, res, next) => {
 	}
 };
 
+exports.activeInactive = async (req, res, next) => {
+	// Get Values
+	const { category_id } = req.params;
+
+	if (!category_id || !mongoose.Types.ObjectId.isValid(category_id))
+		return next(new ErrorResponse("Please provide valid category id", 400));
+
+	try {
+		// Update User to DB
+		const user = await Category.findById(category_id);
+
+		if (!user) return next(new ErrorResponse("No category found", 404));
+
+		await user.updateOne({
+			isActive: !user.isActive,
+			...req.updatedBy,
+		});
+		await user.save();
+
+		res.status(200).json({
+			success: true,
+			message: `Category ${user.isActive ? "deactivated" : "activated"
+				} successfully`,
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
 exports.byID = async (req, res, next) => {
 	// Get Values
 	const { category_id } = req.params;
