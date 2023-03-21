@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, create, update } = require("../../controllers/customer");
+const { getAll, byID, create, update, activeInactive } = require("../../controllers/customer");
 
 // Get All API
 /**
@@ -88,6 +88,32 @@ router.route("/:customer_id").get(protect, byID);
  *
  */
 router.route("/").post(protect, create);
+
+// Update Status API
+/**
+ * @swagger
+ * /api/customer/{id}:
+ *  put:
+ *    tags: [Customer]
+ *    summary: Toggle Customer Status
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Customer Id
+ *    responses:
+ *      200:
+ *        description: Update successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:customer_id").put(protect, activeInactive);
 
 // Update API
 /**

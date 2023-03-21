@@ -7,6 +7,7 @@ const {
 	byID,
 	create,
 	update,
+	activeInactive,
 } = require("../../controllers/subcategory");
 
 // Get All API
@@ -93,6 +94,32 @@ router.route("/:subcategory_id").get(protect, byID);
  *
  */
 router.route("/").post(protect, create);
+
+// Update Status API
+/**
+ * @swagger
+ * /api/subcategory/{id}:
+ *  put:
+ *    tags: [Subcategory]
+ *    summary: Toggle Subcategory Status
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Subcategory Id
+ *    responses:
+ *      200:
+ *        description: Update successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:subCategory_id").put(protect, activeInactive);
 
 // Update API
 /**

@@ -120,6 +120,38 @@ exports.update = async (req, res, next) => {
 	}
 };
 
+exports.activeInactive = async (req, res, next) => {
+	// Get Values
+	const { product_id } = req.params;
+
+	if (!product_id || !mongoose.Types.ObjectId.isValid(product_id))
+		return next(new ErrorResponse("Please provide valid product id", 400));
+
+	try {
+		// Update User to DB
+		const user = await Product.findById(product_id);
+
+		if (!user) return next(new ErrorResponse("No product found", 404));
+
+		await user.updateOne({
+			isActive: !user.isActive,
+			...req.updatedBy,
+		});
+		await user.save();
+
+		res.status(200).json({
+			success: true,
+			message: `Product ${user.isActive ? "deactivated" : "activated"
+				} successfully`,
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
 exports.byID = async (req, res, next) => {
 	// Get Values
 	const { product_id } = req.params;
