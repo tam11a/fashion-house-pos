@@ -11,5 +11,6 @@ router.use("/product", require("./product"));
 router.use("/role", require("./role"));
 router.use("/subcategory", require("./subcategory"));
 router.use("/supplier", require("./supplier"));
+router.use("/tailor", require("./tailor"));
 
 module.exports = router;
