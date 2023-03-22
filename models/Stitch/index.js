@@ -12,6 +12,11 @@ var stitchSchema = new mongoose.Schema(
 			trim: true,
 			default: 0,
 		},
+		size: {
+			type: String,
+			trim: true,
+			default: null,
+		},
 		receivedBy: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Admin",

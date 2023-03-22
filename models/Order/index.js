@@ -7,6 +7,14 @@ var orderSchema = new mongoose.Schema(
 			ref: "Customer",
 			required: [true, "Please Provide Customer Id"],
 		},
+		type: {
+			type: String,
+			enum: {
+				values: ["online", "offline"],
+				message: "{VALUE} is not supported as order type",
+			},
+			default: "offline",
+		},
 		coupon: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Coupon",
