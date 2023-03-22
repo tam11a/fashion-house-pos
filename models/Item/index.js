@@ -7,12 +7,6 @@ var itemSchema = new mongoose.Schema(
 			ref: "Product",
 			required: [true, "Please Provide Product Id"],
 		},
-		// supplier: {
-		// 	type: mongoose.Schema.Types.ObjectId,
-		// 	ref: "Supplier",
-		// 	// required: [true, "Please Provide Supplier Id"],
-		// 	default: null,
-		// },
 		shipment: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Shipment",
@@ -41,11 +35,11 @@ var itemSchema = new mongoose.Schema(
 			{
 				amount: {
 					type: Number,
-					default: 0
+					default: 0,
 				},
 				reason: {
 					type: String,
-					default: null
+					default: null,
 				},
 				createdBy: {
 					type: mongoose.Schema.Types.ObjectId,
@@ -57,8 +51,30 @@ var itemSchema = new mongoose.Schema(
 					type: Date,
 					default: null,
 				},
-			}
-		]
+			},
+		],
+		return: [
+			{
+				orderLine: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "OrderLine",
+					required: [true, "Please Provide Orderline Id"],
+				},
+				createdAt: {
+					type: Date,
+					required: [true, "Please Provide Created Time"],
+				},
+				cause: {
+					type: String,
+					default: 0,
+				},
+				createdBy: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Admin",
+					required: [true, "Please Provide Creator Id"],
+				},
+			},
+		],
 	},
 	{ timestamps: true, id: false }
 );
@@ -115,7 +131,6 @@ module.exports = Item;
  *       otherCosts:
  *         type: string
  */
-
 
 // product:
 //  *         type: string

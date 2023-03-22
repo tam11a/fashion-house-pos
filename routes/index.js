@@ -6,10 +6,12 @@ router.use("/branch", require("./branch"));
 router.use("/category", require("./category"));
 router.use("/customer", require("./customer"));
 router.use("/employee", require("./employee"));
+router.use("/item", require("./item"));
 router.use("/permission", require("./permission"));
 router.use("/product", require("./product"));
 router.use("/role", require("./role"));
 router.use("/subcategory", require("./subcategory"));
+router.use("/shipment", require("./shipment"));
 router.use("/supplier", require("./supplier"));
 router.use("/tailor", require("./tailor"));
 

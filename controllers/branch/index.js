@@ -2,7 +2,6 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Branch = require("../../models/Branch");
-const Admin = require("../../models/Admin");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
@@ -123,8 +122,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Branch ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Branch ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

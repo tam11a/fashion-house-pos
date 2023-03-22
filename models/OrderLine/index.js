@@ -16,23 +16,6 @@ var orderlineSchema = new mongoose.Schema({
 		ref: "Discount",
 		default: null,
 	},
-	return: [
-		{
-			createdAt: {
-				type: Date,
-				required: [true, "Please Provide Created Time"],
-			},
-			cause: {
-				type: String,
-				default: 0,
-			},
-			createdBy: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Admin",
-				required: [true, "Please Provide Creator Id"],
-			},
-		}
-	]
 });
 
 // orderlineSchema.virtual("review", {
