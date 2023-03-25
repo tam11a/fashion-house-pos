@@ -77,11 +77,11 @@ exports.byID = async (req, res, next) => {
 	// Get Values
 	const { item_id } = req.params;
 
-	// mongoose.Types.ObjectId.isValid(id)
-	if (!item_id || !mongoose.Types.ObjectId.isValid(item_id))
-		return next(new ErrorResponse("Please provide valid item id", 400));
-
 	try {
+		// mongoose.Types.ObjectId.isValid(id)
+		if (!item_id || !mongoose.Types.ObjectId.isValid(item_id))
+			return next(new ErrorResponse("Please provide valid item id", 400));
+
 		const item = await Item.findById(item_id).populate([
 			{
 				path: "shipment",
