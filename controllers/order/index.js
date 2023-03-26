@@ -2,6 +2,7 @@ const Order = require("../../models/Order");
 const OrderLine = require("../../models/OrderLine");
 const Item = require("../../models/Item");
 const Stitch = require("../../models/Stitch");
+const ErrorResponse = require("../../utils/errorResponse");
 
 exports.create = async (req, res, next) => {
 	// Get Values
@@ -11,21 +12,15 @@ exports.create = async (req, res, next) => {
 	try {
 		// Store Admin to DB
 
-		console.log({
-			invoice,
-			customer,
-			type,
-			discount,
-			products,
-			tailor,
-			paid,
-			method,
-		});
-
+		var hasStitch = false;
 		var total = 0;
 		products?.map?.((p) => {
-			total += p.price;
+			total += p.price + (p.stitch?.fee || 0);
+			if (!hasStitch) hasStitch = !!p.stitch;
 		});
+
+		if (hasStitch && !tailor)
+			return next(new ErrorResponse("Please provide tailor information", 400));
 
 		const order = await Order.create({
 			invoice,
@@ -40,21 +35,24 @@ exports.create = async (req, res, next) => {
 					receivedBy: req.createdBy.createdBy,
 				},
 			],
+			...req.createdBy,
 		});
 
-		products?.map?.(async (p) => {
+		await products?.map?.(async (p) => {
 			const orderLine = await OrderLine.create({
 				order: order._id,
 				sellPrice: p.price,
+				...req.createdBy,
 			});
 
 			const stitch = await Stitch.create({
 				tailor,
-				size: p.stitch.size,
-				fee: p.stitch.fee,
+				size: p.stitch?.size,
+				fee: p.stitch?.fee,
+				...req.createdBy,
 			});
 
-			const item = await Item.findById(p._id);
+			const item = await Item.findById(p.id);
 			item.orderLine = orderLine._id;
 			item.stitch = stitch._id;
 			item.save();
@@ -66,9 +64,9 @@ exports.create = async (req, res, next) => {
 			message: `Sale saved successfully`,
 		});
 
-		// On Error
+		// On Error641a4391735ea364935e834c
 	} catch (error) {
 		// Send Error Response
-		next(error);
+		return next(error);
 	}
 };
