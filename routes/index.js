@@ -7,6 +7,7 @@ router.use("/category", require("./category"));
 router.use("/customer", require("./customer"));
 router.use("/employee", require("./employee"));
 router.use("/item", require("./item"));
+router.use("/order", require("./order"));
 router.use("/permission", require("./permission"));
 router.use("/product", require("./product"));
 router.use("/role", require("./role"));

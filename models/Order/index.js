@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 var orderSchema = new mongoose.Schema(
 	{
+		invoice: {
+			type: String,
+			unique: [true, "Invoice ID exists, Please try again"],
+		},
 		customer: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Customer",
@@ -52,19 +56,14 @@ var orderSchema = new mongoose.Schema(
 				},
 				receivedAt: {
 					type: Date,
-					required: [true, "Please Provide Received Time"],
+					// required: [true, "Please Provide Received Time"],
+					default: new Date(),
 				},
 			},
 		],
 	},
 	{ timestamps: true, id: false }
 );
-
-// orderSchema.virtual("products", {
-//     ref: "OrderLine",
-//     localField: "_id",
-//     foreignField: "order",
-// });
 
 orderSchema.set("toObject", { virtuals: true });
 orderSchema.set("toJSON", { virtuals: true });
@@ -79,21 +78,43 @@ module.exports = Order;
  *   Order:
  *     type: object
  *     required:
- *        - paymentMethod
+ *        - invoice
+ *        - customer
+ *        - type
+ *        - products
+ *        - method
+ *        - paid
  *     properties:
- *       paymentMethod:
+ *       invoice:
  *         type: string
- *         enum: [Cash]
- *
- */
-
-/**
- * @swagger
- * components:
- *  schemas:
- *   OrderCreate:
- *     type: object
- *     properties:
- *
+ *       customer:
+ *         type: string
+ *       tailor:
+ *         type: string
+ *       type:
+ *         type: string
+ *         enum: [online, offline]
+ *       products:
+ *         type: array
+ *         items:
+ *           properties:
+ *             id:
+ *               type: string
+ *             price:
+ *               type: number
+ *             stitch:
+ *               type: object
+ *               properties:
+ *                 size:
+ *                   type: string
+ *                 fee:
+ *                   type: number
+ *       method:
+ *         type: string
+ *         enum: [Cash, Card, bKash, COD]
+ *       discount:
+ *         type: number
+ *       paid:
+ *         type: number
  *
  */
