@@ -1,6 +1,7 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
-const { create } = require("../../controllers/order");
+const { create, getAll, byID } = require("../../controllers/order");
+const { query } = require("../../middleware/query");
 const router = express.Router();
 
 // Create API
@@ -29,3 +30,70 @@ const router = express.Router();
 router.route("/").post(protect, create);
 
 module.exports = router;
+
+// Get All API
+/**
+ * @swagger
+ * /api/order:
+ *  get:
+ *    tags: [Order]
+ *    summary: Get All Order List
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: query
+ *        name: search
+ *        type: string
+ *      - in: query
+ *        name: limit
+ *        type: string
+ *      - in: query
+ *        name: page
+ *        type: string
+ *      - in: query
+ *        name: status
+ *        type: string
+ *      - in: query
+ *        name: customer
+ *        type: string
+ *        enum:
+ *          - Pending
+ *          - Confirmed
+ *          - Shipped
+ *          - Delivered
+ *          - Canceled
+ *          - Returned
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/").get(protect, query, getAll);
+
+// Get Order API
+/**
+ * @swagger
+ * /api/order/{id}:
+ *  get:
+ *    tags: [Order]
+ *    summary: Get Order
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Order Id
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:order_id").get(byID);
