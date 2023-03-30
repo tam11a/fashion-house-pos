@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
-const { create, getAll, byID } = require("../../controllers/order");
+const { create, getAll, byID, addTransaction } = require("../../controllers/order");
 const { query } = require("../../middleware/query");
 const router = express.Router();
 
@@ -97,3 +97,35 @@ router.route("/").get(protect, query, getAll);
  *
  */
 router.route("/:order_id").get(byID);
+
+// Get Order API
+/**
+ * @swagger
+ * /api/order/{id}/transaction:
+ *  patch:
+ *    tags: [Order]
+ *    summary: Add transaction in Order
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Order Id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Transaction'
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:order_id/transaction").patch(protect, addTransaction);

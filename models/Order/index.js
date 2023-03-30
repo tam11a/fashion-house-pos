@@ -118,3 +118,21 @@ module.exports = Order;
  *         type: number
  *
  */
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *   Transaction:
+ *     type: object
+ *     required:
+ *        - amount
+ *        - method
+ *     properties:
+ *       amount:
+ *         type: number
+ *       method:
+ *         type: string
+ *         enum: [Cash, Card, bKash, COD]
+ *
+ */
