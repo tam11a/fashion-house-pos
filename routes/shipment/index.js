@@ -29,6 +29,9 @@ const { getAll, byID, create } = require("../../controllers/shipment");
  *      - in: query
  *        name: isActive
  *        type: string
+ *      - in: query
+ *        name: supplier
+ *        type: string
  *    responses:
  *      200:
  *        description: Get successful

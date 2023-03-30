@@ -5,7 +5,7 @@ const Shipment = require("../../models/Shipment");
 const Item = require("../../models/Item");
 
 exports.getAll = async (req, res, next) => {
-	const { isActive } = req.query;
+	const { supplier, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -28,6 +28,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
+						supplier
 					}),
 				},
 				{

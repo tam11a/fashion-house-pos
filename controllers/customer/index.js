@@ -4,7 +4,7 @@ const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Customer = require("../../models/Customer");
 
 exports.getAll = async (req, res, next) => {
-	const { isActive } = req.query;
+	const { gender, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -22,6 +22,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
+						gender
 					}),
 				},
 				{

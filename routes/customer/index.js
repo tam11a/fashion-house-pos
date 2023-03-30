@@ -29,6 +29,9 @@ const { getAll, byID, create, update, activeInactive } = require("../../controll
  *      - in: query
  *        name: isActive
  *        type: string
+ *      - in: query
+ *        name: gender
+ *        type: string
  *    responses:
  *      200:
  *        description: Get successful

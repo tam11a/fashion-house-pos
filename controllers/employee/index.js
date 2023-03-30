@@ -44,7 +44,7 @@ exports.register = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-	const { isVerified, isActive } = req.query;
+	const { gender, isVerified, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -63,6 +63,7 @@ exports.getAll = async (req, res, next) => {
 					...fieldsQuery({
 						isVerified,
 						isActive,
+						gender
 					}),
 				},
 				{
@@ -162,9 +163,8 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Employee ${
-				user.isActive ? "deactivated" : "activated"
-			} successfully`,
+			message: `Employee ${user.isActive ? "deactivated" : "activated"
+				} successfully`,
 		});
 
 		// On Error

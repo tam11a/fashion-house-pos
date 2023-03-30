@@ -29,6 +29,15 @@ const { getAll, byID } = require("../../controllers/item");
  *      - in: query
  *        name: isActive
  *        type: string
+ *      - in: query
+ *        name: shipment
+ *        type: string
+ *      - in: query
+ *        name: branch
+ *        type: string
+ *      - in: query
+ *        name: product
+ *        type: string
  *    responses:
  *      200:
  *        description: Get successful
