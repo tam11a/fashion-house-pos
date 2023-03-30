@@ -146,3 +146,41 @@ exports.byID = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.addTransaction = async (req, res, next) => {
+	// Get Values
+	const { method, amount } = req.body;
+	const { order_id } = req.params;
+
+	// mongoose.Types.ObjectId.isValid(id)
+	if (!order_id || !mongoose.Types.ObjectId.isValid(order_id))
+		return next(new ErrorResponse("Please provide valid order id", 400));
+
+	try {
+		const order = await Order.findById(order_id)
+			.populate([
+				{
+					path: "customer",
+				}
+			])
+
+		if (!order) return next(new ErrorResponse("No order found", 404));
+
+		order.transaction = [...order.transaction, {
+			amount,
+			method,
+			receivedBy: req.createdBy.createdBy,
+		}]
+		order.save()
+
+		res.status(200).json({
+			success: true,
+			message: "Added transaction successfully",
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
