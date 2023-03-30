@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Branch = require("../../models/Branch");
+const BranchJunction = require("../../models/BranchJunction");
 
 exports.getAll = async (req, res, next) => {
 	const { isActive } = req.query;
@@ -160,6 +161,37 @@ exports.byID = async (req, res, next) => {
 			success: true,
 			data: branch,
 		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
+exports.addEmployee = async (req, res, next) => {
+	// Get Values
+	const { branch_id } = req.params;
+	const adminIds = req.query.admins?.replaceAll(" ", "")?.split(",");
+	if (!branch_id || !mongoose.Types.ObjectId.isValid(branch_id))
+		return next(new ErrorResponse("Please provide valid branch id", 400));
+
+	try {
+		// Update Branch to DB
+		const branch = await Branch.findById(branch_id);
+
+		if (branch) {
+			await BranchJunction.insertMany(
+				Array.from(adminIds, (i) => ({
+					branch: branch_id,
+					admin: i,
+				}))
+			);
+			res.status(200).json({
+				success: true,
+				message: "Admins added to branch successfully",
+			});
+		} else return next(new ErrorResponse("Branch not found", 404));
 
 		// On Error
 	} catch (error) {
