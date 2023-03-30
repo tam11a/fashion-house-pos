@@ -3,6 +3,7 @@ const router = express.Router();
 
 router.use("/auth", require("./auth"));
 router.use("/branch", require("./branch"));
+router.use("/branchjunction", require("./branchjunction"));
 router.use("/category", require("./category"));
 router.use("/customer", require("./customer"));
 router.use("/employee", require("./employee"));
