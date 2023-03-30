@@ -4,7 +4,7 @@ const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Subcategory = require("../../models/Subcategory");
 
 exports.getAll = async (req, res, next) => {
-	const { isActive } = req.query;
+	const { category, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -18,6 +18,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
+						category,
 					}),
 				},
 				{
@@ -133,8 +134,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Subcategory ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Subcategory ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

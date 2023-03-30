@@ -35,6 +35,9 @@ const {
  *      - in: query
  *        name: isActive
  *        type: string
+ *      - in: query
+ *        name: category
+ *        type: string
  *    responses:
  *      200:
  *        description: Get successful
