@@ -10,6 +10,7 @@ router.use("/employee", require("./employee"));
 router.use("/item", require("./item"));
 router.use("/order", require("./order"));
 router.use("/permission", require("./permission"));
+router.use("/petty-cash", require("./petty-cash"));
 router.use("/product", require("./product"));
 router.use("/role", require("./role"));
 router.use("/scan", require("./scan"));
