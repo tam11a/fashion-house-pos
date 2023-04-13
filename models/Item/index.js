@@ -117,36 +117,11 @@ module.exports = Item;
  *   ItemUpdate:
  *     type: object
  *     properties:
- *       product:
- *         type: string
- *         description: product id
- *       shipment:
- *         type: string
+ *       id:
+ *         type: array
+ *         items:
+ *           type: string
  *       branch:
  *         type: string
- *       orderLine:
- *         type: string
- *       stitch:
- *         type: string
- *       otherCosts:
- *         type: string
+ *
  */
-
-// product:
-//  *         type: string
-//  *         description: product id
-//  *       shipment:
-//  *         type: string
-//  *         description: shipment id
-//  *       branch:
-//  *         type: string
-//  *         description: branch id
-//  *       orderLine:
-//  *         type: string
-//  *         description: orderLine id
-//  *       stitch:
-//  *         type: string
-//  *         description: stitch id
-//  *       otherCosts:
-//  *         type: string
-//  *         description: otherCosts id

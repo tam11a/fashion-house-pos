@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID } = require("../../controllers/item");
+const { getAll, byID, bulkUpdate } = require("../../controllers/item");
 
 // Get All API
 /**
@@ -73,5 +73,30 @@ router.route("/").get(protect, query, getAll);
  */
 
 router.route("/:item_id").get(protect, byID);
+
+// Bulk Update API
+/**
+ * @swagger
+ * /api/item:
+ *  put:
+ *    tags: [Item]
+ *    summary: Bulk update item
+ *    security:
+ *      - bearer: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/ItemUpdate'
+ *
+ *    responses:
+ *      201:
+ *        description: Account creation successful
+ *      400:
+ *        description: Bad Request
+ *
+ */
+router.route("/").put(protect, bulkUpdate);
 
 module.exports = router;

@@ -22,7 +22,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
-						gender
+						gender,
 					}),
 				},
 				{
@@ -45,7 +45,8 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, phone, address, email, gender, dob, bank, bKash } = req.body;
+	const { name, phone, address, email, gender, dob, bank, bKash, badge } =
+		req.body;
 
 	try {
 		// Store Admin to DB
@@ -58,6 +59,7 @@ exports.create = async (req, res, next) => {
 			dob,
 			bank,
 			bKash,
+			badge,
 			...req.createdBy,
 		});
 
@@ -81,7 +83,8 @@ exports.update = async (req, res, next) => {
 	if (!customer_id || !mongoose.Types.ObjectId.isValid(customer_id))
 		return next(new ErrorResponse("Please provide valid customer id", 400));
 
-	const { name, phone, address, email, gender, dob, bank, bKash } = req.body;
+	const { name, phone, address, email, gender, dob, bank, bKash, badge } =
+		req.body;
 
 	try {
 		// Update customer to DB
@@ -94,6 +97,7 @@ exports.update = async (req, res, next) => {
 			dob,
 			bank,
 			bKash,
+			badge,
 			...req.updatedBy,
 		});
 
@@ -133,8 +137,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Customer ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Customer ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

@@ -11,25 +11,21 @@ var shipmentSchema = new mongoose.Schema(
 			type: Number,
 			required: [true, "Please Provide Weight"], // If Required
 		},
+		weightCost: {
+			type: Number,
+			required: [true, "Please Provide Shipment Cost"], // If Required
+		},
 		buyingPrice: {
 			type: Number,
 			required: [true, "Please Provide Buying Price"], // If Required
 		},
-		shipmentCost: {
+		buyingDiscount: {
 			type: Number,
-			required: [true, "Please Provide Shipment Cost"], // If Required
+			default: 0,
 		},
 		supplierCommision: {
 			type: Number,
 			required: [true, "Please Provide Supplier Commision"], // If Required
-		},
-		sellPrice: {
-			type: Number,
-			required: [true, "Please Provide Sell Price"], // If Required
-		},
-		tax: {
-			type: Number,
-			default: 0,
 		},
 	},
 	{ timestamps: true, id: false }
@@ -59,30 +55,27 @@ module.exports = Shipment;
  *   Shipment:
  *     type: object
  *     required:
- *        - weight
- *        - buyingPrice
- *        - shipmentCost
- *        - supplierCommision
- *        - sellPrice
  *        - product
  *        - quantity
+ *        - weight
+ *        - weightCost
+ *        - buyingPrice
+ *        - supplierCommision
  *     properties:
  *       supplier:
  *         type: string
- *       weight:
- *         type: number
- *       buyingPrice:
- *         type: number
- *       shipmentCost:
- *         type: number
- *       supplierCommision:
- *         type: number
- *       sellPrice:
- *         type: number
- *       tax:
- *         type: number
  *       product:
  *         type: string
  *       quantity:
+ *         type: number
+ *       weight:
+ *         type: number
+ *       weightCost:
+ *         type: number
+ *       buyingPrice:
+ *         type: number
+ *       buyingDiscount:
+ *         type: number
+ *       supplierCommision:
  *         type: number
  */

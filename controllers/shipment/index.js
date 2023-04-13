@@ -28,7 +28,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
-						supplier
+						supplier,
 					}),
 				},
 				{
@@ -59,14 +59,13 @@ exports.create = async (req, res, next) => {
 	// Get Values
 	const {
 		supplier,
-		weight,
-		buyingPrice,
-		shipmentCost,
-		supplierCommision,
-		sellPrice,
-		tax,
 		product,
 		quantity,
+		weight,
+		weightCost,
+		buyingPrice,
+		buyingDiscount,
+		supplierCommision,
 	} = req.body;
 
 	try {
@@ -77,11 +76,10 @@ exports.create = async (req, res, next) => {
 		const shipment = await Shipment.create({
 			supplier,
 			weight,
+			weightCost,
 			buyingPrice,
-			shipmentCost,
+			buyingDiscount,
 			supplierCommision,
-			sellPrice,
-			tax,
 			...req.createdBy,
 		});
 
@@ -91,13 +89,14 @@ exports.create = async (req, res, next) => {
 				shipment: shipment._id,
 				otherCosts: [],
 				return: [],
+				...req.createdBy,
 			}))
 		);
 
 		// Send Success Response
 		res.status(201).json({
 			success: true,
-			message: `shipment added with ${quantity} products successfully`,
+			message: `Shipment added with ${quantity} products successfully`,
 			data: {
 				items: items.flatMap((x) => x._id),
 			},

@@ -33,6 +33,11 @@ var customerSchema = new mongoose.Schema(
 			required: [true, "Please provide gender"],
 			trim: true,
 		},
+		badge: {
+			type: String,
+			enum: ["Premium", "Gold", "Silver"],
+			default: null,
+		},
 		dob: {
 			type: Date,
 			default: null,
@@ -85,6 +90,9 @@ module.exports = Customer;
  *         type: string
  *         pattern: ^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$
  *         default: example@email.com
+ *       badge:
+ *         type: string
+ *         enum: [Premium, Gold, Silver]
  *       gender:
  *         type: string
  *         enum: [male, female, others]
@@ -117,6 +125,9 @@ module.exports = Customer;
  *         type: string
  *         pattern: ^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$
  *         default: example@email.com
+ *       badge:
+ *         type: string
+ *         enum: [Premium, Gold, Silver]
  *       gender:
  *         type: string
  *         enum: [male, female, others]

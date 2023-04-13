@@ -4,7 +4,7 @@ const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Item = require("../../models/Item");
 
 exports.getAll = async (req, res, next) => {
-	const { shipment,branch,product, isActive } = req.query;
+	const { shipment, branch, product, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -30,13 +30,17 @@ exports.getAll = async (req, res, next) => {
 						isActive,
 						shipment,
 						branch,
-						product
+						product,
 					}),
 				},
 				{
 					...req.pagination,
 					// select: "name address phone",
 					populate: [
+						{
+							path: "branch",
+							select: "name",
+						},
 						{
 							path: "shipment",
 							select: "supplier",
@@ -124,6 +128,32 @@ exports.byID = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			data: item,
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
+exports.bulkUpdate = async (req, res, next) => {
+	// Get Values
+	const { id, branch } = req.body;
+
+	try {
+		// mongoose.Types.ObjectId.isValid(id)
+		if (!branch || !mongoose.Types.ObjectId.isValid(branch))
+			return next(new ErrorResponse("Please provide valid branch id", 400));
+
+		await Item.updateMany(
+			{ _id: { $in: id } },
+			{ $set: { branch: branch, ...req.updatedBy } }
+		);
+
+		res.status(200).json({
+			success: true,
+			message: `Updated ${id.length} items successfully`,
 		});
 
 		// On Error
