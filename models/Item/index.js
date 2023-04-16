@@ -62,11 +62,11 @@ var itemSchema = new mongoose.Schema(
 				},
 				createdAt: {
 					type: Date,
-					required: [true, "Please Provide Created Time"],
+					default: Date.now,
 				},
 				cause: {
 					type: String,
-					default: 0,
+					default: null,
 				},
 				createdBy: {
 					type: mongoose.Schema.Types.ObjectId,

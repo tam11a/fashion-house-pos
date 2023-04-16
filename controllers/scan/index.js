@@ -46,6 +46,9 @@ exports.byID = async (req, res, next) => {
 
 		if (!item) return next(new ErrorResponse("No item found", 404));
 
+		if (!!item.orderLine)
+			return next(new ErrorResponse("Item already sold", 404));
+
 		res.status(200).json({
 			success: true,
 			data: item,

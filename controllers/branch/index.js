@@ -185,7 +185,8 @@ exports.addEmployee = async (req, res, next) => {
 				Array.from(adminIds, (i) => ({
 					branch: branch_id,
 					admin: i,
-				}))
+				})),
+				{ ignoreDuplicates: true }
 			);
 			res.status(200).json({
 				success: true,
