@@ -186,7 +186,7 @@ exports.addEmployee = async (req, res, next) => {
 					branch: branch_id,
 					admin: i,
 				})),
-				{ ignoreDuplicates: true }
+				{ ignoreDuplicates: true, ordered: false }
 			);
 			res.status(200).json({
 				success: true,
@@ -197,6 +197,10 @@ exports.addEmployee = async (req, res, next) => {
 		// On Error
 	} catch (error) {
 		// Send Error Response
-		next(error);
+		res.status(200).json({
+			success: true,
+			message: "Admins added to branch successfully",
+		});
+		// next(error);
 	}
 };

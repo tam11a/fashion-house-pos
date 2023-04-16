@@ -19,8 +19,7 @@ var branchjunctionSchema = new mongoose.Schema(
 branchjunctionSchema.set("toObject", { virtuals: true });
 branchjunctionSchema.set("toJSON", { virtuals: true });
 
-const BranchJunction = mongoose.model(
-	"BranchJunction",
-	branchjunctionSchema
-);
+branchjunctionSchema.index({ branch: 1, admin: 1 }, { unique: true });
+
+const BranchJunction = mongoose.model("BranchJunction", branchjunctionSchema);
 module.exports = BranchJunction;
