@@ -74,7 +74,7 @@ exports.create = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-	const { customer} = req.query;
+	const { customer } = req.query;
 
 	try {
 		res.status(200).json({
@@ -83,16 +83,10 @@ exports.getAll = async (req, res, next) => {
 			...(await Order.paginate(
 				{
 					...(req.search && {
-						$or: [
-							...queryObjectBuilder(
-								req.search,
-								[],
-								true
-							)
-						],
+						$or: [...queryObjectBuilder(req.search, [], true)],
 					}),
 					...fieldsQuery({
-						customer
+						customer,
 					}),
 				},
 				{
@@ -107,7 +101,7 @@ exports.getAll = async (req, res, next) => {
 						totalDocs: "total",
 					},
 				}
-			))
+			)),
 		});
 
 		// On Error
@@ -126,14 +120,61 @@ exports.byID = async (req, res, next) => {
 		return next(new ErrorResponse("Please provide valid order id", 400));
 
 	try {
-		const order = await Order.findById(order_id)
-			.populate([
-				{
-					path: "customer",
-				}
-			])
+		const order = await Order.findById(order_id).populate([
+			{
+				path: "customer",
+			},
+		]);
 
 		if (!order) return next(new ErrorResponse("No order found", 404));
+
+		res.status(200).json({
+			success: true,
+			data: order,
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
+exports.ItemsByID = async (req, res, next) => {
+	// Get Values
+	const { order_id } = req.params;
+
+	// mongoose.Types.ObjectId.isValid(id)
+	if (!order_id || !mongoose.Types.ObjectId.isValid(order_id))
+		return next(new ErrorResponse("Please provide valid order id", 400));
+
+	try {
+		const order = await Item.paginate(
+			{
+				...queryObjectBuilder(order_id, ["orderLine.order"], false, true),
+				// ...fieldsQuery({
+				// 	"orderLine.order": order_id,
+				// }),
+			},
+			{
+				populate: [
+					{
+						path: "product",
+					},
+					{
+						path: "shipment",
+					},
+					{
+						path: "branch",
+					},
+					{
+						path: "orderLine",
+					},
+				],
+			}
+		);
+
+		// if (!order.length) return next(new ErrorResponse("No order found", 404));
 
 		res.status(200).json({
 			success: true,
@@ -157,21 +198,23 @@ exports.addTransaction = async (req, res, next) => {
 		return next(new ErrorResponse("Please provide valid order id", 400));
 
 	try {
-		const order = await Order.findById(order_id)
-			.populate([
-				{
-					path: "customer",
-				}
-			])
+		const order = await Order.findById(order_id).populate([
+			{
+				path: "customer",
+			},
+		]);
 
 		if (!order) return next(new ErrorResponse("No order found", 404));
 
-		order.transaction = [...order.transaction, {
-			amount,
-			method,
-			receivedBy: req.createdBy.createdBy,
-		}]
-		order.save()
+		order.transaction = [
+			...order.transaction,
+			{
+				amount,
+				method,
+				receivedBy: req.createdBy.createdBy,
+			},
+		];
+		order.save();
 
 		res.status(200).json({
 			success: true,

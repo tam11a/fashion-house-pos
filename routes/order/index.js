@@ -1,6 +1,12 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
-const { create, getAll, byID, addTransaction } = require("../../controllers/order");
+const {
+	create,
+	getAll,
+	byID,
+	addTransaction,
+	ItemsByID,
+} = require("../../controllers/order");
 const { query } = require("../../middleware/query");
 const router = express.Router();
 
@@ -73,6 +79,30 @@ module.exports = router;
  *
  */
 router.route("/").get(protect, query, getAll);
+
+// Get Order API
+/**
+ * @swagger
+ * /api/order/orderlines/{id}:
+ *  get:
+ *    tags: [Order]
+ *    summary: Get Items
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Order Id
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/orderlines/:order_id").get(ItemsByID);
 
 // Get Order API
 /**
