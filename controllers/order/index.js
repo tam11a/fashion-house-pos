@@ -40,33 +40,35 @@ exports.create = async (req, res, next) => {
 			...req.createdBy,
 		});
 
-		await products?.map?.(async (p) => {
-			const orderLine = await OrderLine.create({
-				order: order._id,
-				sellPrice: p.price,
-				...req.createdBy,
-			});
-
-			var stitch;
-
-			if (p.stitch)
-				stitch = await Stitch.create({
-					tailor,
-					size: p.stitch?.size,
-					fee: p.stitch?.fee,
+		await Promise.all(
+			products?.map?.(async (p) => {
+				const orderLine = await OrderLine.create({
+					order: order._id,
+					sellPrice: p.price,
 					...req.createdBy,
 				});
 
-			await Item.findOneAndUpdate(
-				{
-					_id: p.id,
-				},
-				{
-					orderLine: orderLine._id,
-					stitch: stitch?._id,
-				}
-			);
-		});
+				var stitch;
+
+				if (p.stitch)
+					stitch = await Stitch.create({
+						tailor,
+						size: p.stitch?.size,
+						fee: p.stitch?.fee,
+						...req.createdBy,
+					});
+
+				await Item.findOneAndUpdate(
+					{
+						_id: p.id,
+					},
+					{
+						orderLine: orderLine._id,
+						stitch: stitch?._id,
+					}
+				);
+			})
+		);
 
 		// Send Success Response
 		res.status(201).json({
