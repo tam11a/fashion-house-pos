@@ -41,6 +41,10 @@ exports.create = async (req, res, next) => {
 		});
 
 		await products?.map?.(async (p) => {
+			const item = await Item.findOne({
+				_id: p.id,
+			});
+
 			const orderLine = await OrderLine.create({
 				order: order._id,
 				sellPrice: p.price,
@@ -54,7 +58,6 @@ exports.create = async (req, res, next) => {
 				...req.createdBy,
 			});
 
-			const item = await Item.findById(p.id);
 			item.orderLine = orderLine._id;
 			item.stitch = stitch._id;
 			item.save();
@@ -66,7 +69,7 @@ exports.create = async (req, res, next) => {
 			message: `Sale saved successfully`,
 		});
 
-		// On Error641a4391735ea364935e834c
+		// On Error
 	} catch (error) {
 		// Send Error Response
 		return next(error);
