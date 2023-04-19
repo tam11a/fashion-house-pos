@@ -6,7 +6,7 @@ exports.byID = async (req, res, next) => {
 	const { scan_id } = req.params;
 	const { cause } = req.body;
 	try {
-		if (!scan_id || !mongoose.Types.ObjectId(scan_id))
+		if (!scan_id)
 			return next(new ErrorResponse("Please provide valid item id", 400));
 	} catch {
 		return next(new ErrorResponse("Please provide valid item id", 400));
