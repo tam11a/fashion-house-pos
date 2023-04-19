@@ -84,7 +84,7 @@ exports.create = async (req, res, next) => {
 		});
 
 		const items = await Item.insertMany(
-			Array.from(Array(quantity), (x) => ({
+			Array.from(Array(parseInt(quantity)), () => ({
 				product,
 				shipment: shipment._id,
 				otherCosts: [],

@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
+const shortid = require("shortid");
 
 var itemSchema = new mongoose.Schema(
 	{
+		_id: {
+			type: String,
+			unique: true,
+			index: true,
+			default: () => shortid.generate(),
+		},
 		product: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Product",
