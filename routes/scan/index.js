@@ -18,6 +18,11 @@ const router = express.Router();
  *        required: true
  *        type: string
  *        description: Scan Id
+ *      - in: query
+ *        name: branch_id
+ *        required: true
+ *        type: string
+ *        description: Branch Id
  *    responses:
  *      200:
  *        description: Get successful

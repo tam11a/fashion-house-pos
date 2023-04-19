@@ -3,11 +3,20 @@ const Item = require("../../models/Item");
 
 exports.byID = async (req, res, next) => {
 	const { scan_id } = req.params;
+	const { branch_id } = req.query;
+
 	try {
 		if (!scan_id)
 			return next(new ErrorResponse("Please provide valid item id", 400));
 	} catch {
 		return next(new ErrorResponse("Please provide valid item id", 400));
+	}
+
+	try {
+		if (!branch_id)
+			return next(new ErrorResponse("Please provide valid branch id", 400));
+	} catch {
+		return next(new ErrorResponse("Please provide valid branch id", 400));
 	}
 
 	try {
@@ -47,6 +56,12 @@ exports.byID = async (req, res, next) => {
 
 		if (!!item.orderLine)
 			return next(new ErrorResponse("Item already sold", 404));
+
+		if (!item.branch)
+			return next(new ErrorResponse("Product is not in any branch", 400));
+
+		if (item.branch !== branch_id)
+			return next(new ErrorResponse("Product is in different branch", 400));
 
 		res.status(200).json({
 			success: true,
