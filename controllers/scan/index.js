@@ -60,7 +60,7 @@ exports.byID = async (req, res, next) => {
 		if (!item.branch)
 			return next(new ErrorResponse("Product is not in any branch", 400));
 
-		if (item.branch !== branch_id)
+		if (item.branch.toString() !== branch_id)
 			return next(new ErrorResponse("Product is in different branch", 400));
 
 		res.status(200).json({
