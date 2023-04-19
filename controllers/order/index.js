@@ -41,26 +41,31 @@ exports.create = async (req, res, next) => {
 		});
 
 		await products?.map?.(async (p) => {
-			const item = await Item.findOne({
-				_id: p.id,
-			});
-
 			const orderLine = await OrderLine.create({
 				order: order._id,
 				sellPrice: p.price,
 				...req.createdBy,
 			});
 
-			const stitch = await Stitch.create({
-				tailor,
-				size: p.stitch?.size,
-				fee: p.stitch?.fee,
-				...req.createdBy,
-			});
+			var stitch;
 
-			item.orderLine = orderLine._id;
-			item.stitch = stitch._id;
-			item.save();
+			if (p.stitch)
+				stitch = await Stitch.create({
+					tailor,
+					size: p.stitch?.size,
+					fee: p.stitch?.fee,
+					...req.createdBy,
+				});
+
+			await Item.findOneAndUpdate(
+				{
+					_id: p.id,
+				},
+				{
+					orderLine: orderLine._id,
+					stitch: stitch?._id,
+				}
+			);
 		});
 
 		// Send Success Response
