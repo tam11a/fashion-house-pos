@@ -166,9 +166,7 @@ exports.ItemsByID = async (req, res, next) => {
 					{
 						return: {
 							$elemMatch: {
-								...fieldsQuery({
-									"orderLine.order": order_id,
-								}),
+								order: order_id,
 							},
 						},
 					},

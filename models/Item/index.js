@@ -67,6 +67,11 @@ var itemSchema = new mongoose.Schema(
 					ref: "OrderLine",
 					required: [true, "Please Provide Orderline Id"],
 				},
+				order: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Order",
+					required: [true, "Please Provide Order Id"],
+				},
 				createdAt: {
 					type: Date,
 					default: Date.now,

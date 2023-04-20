@@ -13,7 +13,7 @@ exports.byID = async (req, res, next) => {
 	}
 
 	try {
-		const FoundItem = await Item.findById(scan_id);
+		const FoundItem = await Item.findById(scan_id).populate("orderLine");
 
 		if (!FoundItem)
 			return next(new ErrorResponse("No Product Item Found!!", 404));
@@ -24,7 +24,8 @@ exports.byID = async (req, res, next) => {
 			);
 
 		FoundItem.return?.push({
-			orderLine: FoundItem.orderLine,
+			orderLine: FoundItem.orderLine._id,
+			order: FoundItem.orderLine.order,
 			cause,
 			...req.createdBy,
 		});
