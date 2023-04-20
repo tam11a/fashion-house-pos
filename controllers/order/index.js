@@ -161,15 +161,18 @@ exports.ItemsByID = async (req, res, next) => {
 	try {
 		const order = await Item.paginate(
 			{
-				...queryObjectBuilder(
-					order_id,
-					["orderLine.order", "return.orderLine.order"],
-					false,
-					true
-				),
-				// ...fieldsQuery({
-				// 	"orderLine.order": order_id,
-				// }),
+				$or: [
+					{ ...queryObjectBuilder(order_id, ["orderLine.order"], false, true) },
+					{
+						return: {
+							$elemMatch: {
+								...fieldsQuery({
+									"orderLine.order": order_id,
+								}),
+							},
+						},
+					},
+				],
 			},
 			{
 				populate: [
