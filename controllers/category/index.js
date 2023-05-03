@@ -22,7 +22,7 @@ exports.getAll = async (req, res, next) => {
 				},
 				{
 					...req.pagination,
-					// select: "name address phone",
+					populate: "totalSubcategories totalProducts",
 					customLabels: {
 						docs: "data",
 						totalDocs: "total",
@@ -116,8 +116,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Category ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Category ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

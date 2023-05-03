@@ -4,7 +4,7 @@ const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Product = require("../../models/Product");
 
 exports.getAll = async (req, res, next) => {
-	const { category, subcategory,isActive } = req.query;
+	const { category, subcategory, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -19,7 +19,7 @@ exports.getAll = async (req, res, next) => {
 					...fieldsQuery({
 						isActive,
 						category,
-						subcategory
+						subcategory,
 					}),
 				},
 				{
@@ -42,6 +42,9 @@ exports.getAll = async (req, res, next) => {
 						{
 							path: "updatedBy",
 							select: "firstName lastName fullName userName",
+						},
+						{
+							path: "totalItems",
 						},
 					],
 					customLabels: {
@@ -143,8 +146,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Product ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Product ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

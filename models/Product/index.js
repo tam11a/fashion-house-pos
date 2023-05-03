@@ -30,6 +30,13 @@ var productSchema = new mongoose.Schema(
 	{ timestamps: true, id: false }
 );
 
+productSchema.virtual("totalItems", {
+	ref: "Item",
+	localField: "_id",
+	foreignField: "product",
+	count: true,
+});
+
 productSchema.set("toObject", { virtuals: true });
 productSchema.set("toJSON", { virtuals: true });
 
