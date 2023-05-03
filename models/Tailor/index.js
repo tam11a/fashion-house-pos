@@ -26,7 +26,7 @@ var tailorSchema = new mongoose.Schema(
 	{ timestamps: true, id: false }
 );
 
-productSchema.virtual("totalItems", {
+tailorSchema.virtual("totalItems", {
 	ref: "Stitch",
 	localField: "_id",
 	foreignField: "tailor",
