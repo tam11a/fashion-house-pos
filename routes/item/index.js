@@ -30,6 +30,12 @@ const { getAll, byID, bulkUpdate } = require("../../controllers/item");
  *        name: isActive
  *        type: string
  *      - in: query
+ *        name: supplier
+ *        type: string
+ *      - in: query
+ *        name: tailor
+ *        type: string
+ *      - in: query
  *        name: shipment
  *        type: string
  *      - in: query

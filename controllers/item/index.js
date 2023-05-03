@@ -4,7 +4,7 @@ const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Item = require("../../models/Item");
 
 exports.getAll = async (req, res, next) => {
-	const { shipment, branch, product, isActive } = req.query;
+	const { shipment, branch, product, supplier, tailor, isActive } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -28,10 +28,27 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						isActive,
-						shipment,
 						branch,
 						product,
+						...queryObjectBuilder(tailor, ["stitch.tailor"], false, true),
 					}),
+					$and: [
+						{
+							...fieldsQuery({
+								shipment,
+							}),
+						},
+						{
+							...fieldsQuery({
+								...queryObjectBuilder(
+									supplier,
+									["shipment.supplier"],
+									false,
+									true
+								),
+							}),
+						},
+					],
 				},
 				{
 					...req.pagination,
@@ -40,6 +57,15 @@ exports.getAll = async (req, res, next) => {
 						{
 							path: "branch",
 							select: "name",
+						},
+						{
+							path: "stitch",
+							populate: [
+								{
+									path: "tailor",
+									select: "name",
+								},
+							],
 						},
 						{
 							path: "shipment",
