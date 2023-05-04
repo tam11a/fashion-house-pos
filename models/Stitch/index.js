@@ -5,7 +5,7 @@ var stitchSchema = new mongoose.Schema(
 		tailor: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Tailor",
-			required: [true, "Please Provide Tailor Id"],
+			default: null,
 		},
 		fee: {
 			type: Number,

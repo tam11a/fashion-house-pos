@@ -78,4 +78,14 @@ module.exports = Shipment;
  *         type: number
  *       supplierCommision:
  *         type: number
+ *       stitch:
+ *         type: object
+ *         required:
+ *           - fee
+ *           - size
+ *         properties:
+ *           fee:
+ *             type: number
+ *           size:
+ *             type: string
  */

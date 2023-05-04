@@ -3,6 +3,7 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Shipment = require("../../models/Shipment");
 const Item = require("../../models/Item");
+const Stitch = require("../../models/Stitch");
 
 exports.getAll = async (req, res, next) => {
 	const { supplier, isActive } = req.query;
@@ -66,12 +67,24 @@ exports.create = async (req, res, next) => {
 		buyingPrice,
 		buyingDiscount,
 		supplierCommision,
+		stitch,
 	} = req.body;
 
 	try {
 		if (quantity < 1) {
 			return next(new ErrorResponse("No shipped quantity found!", 400));
 		}
+
+		if (stitch) {
+			var stitched = await Stitch.create({
+				fee: stitch.fee,
+				size: stitch.size,
+				receivedBy: req.createdBy.createdBy,
+				receivedAt: new Date(),
+				...req.createdBy,
+			});
+		}
+
 		// Store Admin to DB
 		const shipment = await Shipment.create({
 			supplier,
@@ -89,6 +102,7 @@ exports.create = async (req, res, next) => {
 				shipment: shipment._id,
 				otherCosts: [],
 				return: [],
+				stitch: stitched?._id || null,
 				...req.createdBy,
 			}))
 		);
