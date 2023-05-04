@@ -30,6 +30,15 @@ exports.byID = async (req, res, next) => {
 				],
 			},
 			{
+				path: "stitch",
+				populate: [
+					{
+						path: "tailor",
+						select: "name address",
+					},
+				],
+			},
+			{
 				path: "product",
 				populate: [
 					{
