@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Item = require("../../models/Item");
+const Stitch = require("../../models/Stitch");
 
 exports.getAll = async (req, res, next) => {
 	const { shipment, branch, product, supplier, tailor, isActive } = req.query;
@@ -141,6 +142,10 @@ exports.byID = async (req, res, next) => {
 				],
 			},
 			{
+				path: "stitch",
+				populate: "tailor",
+			},
+			{
 				path: "createdBy",
 				select: "firstName lastName fullName userName",
 			},
@@ -181,6 +186,78 @@ exports.bulkUpdate = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			message: `Updated ${id.length} items successfully`,
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
+exports.ReceiveByID = async (req, res, next) => {
+	// Get Values
+	const { item_id } = req.params;
+
+	try {
+		// mongoose.Types.ObjectId.isValid(id)
+		if (!item_id)
+			// || !mongoose.Types.ObjectId.isValid(item_id))
+			return next(new ErrorResponse("Please provide valid item id", 400));
+
+		const item = await Item.findById(item_id).populate([
+			{
+				path: "shipment",
+				select: "supplier",
+				populate: [
+					{
+						path: "supplier",
+					},
+				],
+			},
+			{
+				path: "product",
+				select: "name category subcategory",
+				populate: [
+					{
+						path: "category",
+						select: "name",
+					},
+					{
+						path: "subcategory",
+						select: "name",
+					},
+				],
+			},
+			{
+				path: "stitch",
+				populate: "tailor",
+			},
+			{
+				path: "createdBy",
+				select: "firstName lastName fullName userName",
+			},
+			{
+				path: "updatedBy",
+				select: "firstName lastName fullName userName",
+			},
+		]);
+
+		if (!item) return next(new ErrorResponse("No item found", 404));
+
+		if (!item.stitch)
+			return next(new ErrorResponse("Item is not sent to any tailor yet", 400));
+
+		const stitch = await Stitch.findByIdAndUpdate(item.stitch, {
+			receivedBy: req.createdBy.createdBy,
+			receivedAt: new Date(),
+		});
+
+		if (!stitch) return next(new ErrorResponse("Something went wrong!", 400));
+
+		res.status(200).json({
+			success: true,
+			message: "Stitched product received successfully",
 		});
 
 		// On Error

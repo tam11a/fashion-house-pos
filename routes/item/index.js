@@ -2,7 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, bulkUpdate } = require("../../controllers/item");
+const {
+	getAll,
+	byID,
+	bulkUpdate,
+	ReceiveByID,
+} = require("../../controllers/item");
 
 // Get All API
 /**
@@ -104,5 +109,31 @@ router.route("/:item_id").get(protect, byID);
  *
  */
 router.route("/").put(protect, bulkUpdate);
+
+/**
+ * @swagger
+ * /api/item/{id}:
+ *  put:
+ *    tags: [Item]
+ *    summary: Receive Item from Tailor
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Item Id
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+
+router.route("/:item_id").put(protect, ReceiveByID);
 
 module.exports = router;
