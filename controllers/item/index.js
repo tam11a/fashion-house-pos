@@ -146,6 +146,9 @@ exports.byID = async (req, res, next) => {
 				populate: "tailor",
 			},
 			{
+				path: "branch",
+			},
+			{
 				path: "createdBy",
 				select: "firstName lastName fullName userName",
 			},

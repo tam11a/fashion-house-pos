@@ -8,7 +8,7 @@ const { default: mongoose } = require("mongoose");
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { invoice, customer, type, discount, products, tailor, paid, method } =
+	const { invoice, customer, type, discount, products, tailor, transactions } =
 		req.body;
 
 	try {
@@ -30,13 +30,13 @@ exports.create = async (req, res, next) => {
 			type,
 			discount,
 			total,
-			transaction: [
+			transaction: Array.from(transactions || [], ({ paid, method }) => (
 				{
 					amount: paid,
 					method,
 					receivedBy: req.createdBy.createdBy,
-				},
-			],
+				}
+			)),
 			...req.createdBy,
 		});
 
