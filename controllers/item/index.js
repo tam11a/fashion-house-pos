@@ -17,6 +17,7 @@ exports.getAll = async (req, res, next) => {
 							...queryObjectBuilder(
 								req.search,
 								[
+									"_id",
 									"product.name",
 									"shipment.supplier.name",
 									"shipment.supplier.phone",
