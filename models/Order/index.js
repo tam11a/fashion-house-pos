@@ -56,8 +56,8 @@ var orderSchema = new mongoose.Schema(
 				},
 				receivedAt: {
 					type: Date,
-					// required: [true, "Please Provide Received Time"],
-					default: new Date(),
+					required: [true, "Please Provide Received Time"],
+					default: Date.now,
 				},
 			},
 		],
