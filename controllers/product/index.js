@@ -13,7 +13,7 @@ exports.getAll = async (req, res, next) => {
 				{
 					...(req.search && {
 						$or: [
-							...queryObjectBuilder(req.search, ["name", "description"], true),
+							...queryObjectBuilder(req.search, ["name", "description", "category.name", "subcategory.name"], true),
 						],
 					}),
 					...fieldsQuery({
@@ -146,9 +146,8 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Product ${
-				user.isActive ? "deactivated" : "activated"
-			} successfully`,
+			message: `Product ${user.isActive ? "deactivated" : "activated"
+				} successfully`,
 		});
 
 		// On Error
