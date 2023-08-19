@@ -23,6 +23,10 @@ const router = express.Router();
  *        required: true
  *        type: string
  *        description: Branch Id
+ *      - in: query
+ *        name: is_product
+ *        required: true
+ *        type: boolean
  *    responses:
  *      200:
  *        description: Get successful
