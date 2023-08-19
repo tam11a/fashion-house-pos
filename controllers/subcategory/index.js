@@ -38,6 +38,9 @@ exports.getAll = async (req, res, next) => {
 							path: "updatedBy",
 							select: "firstName lastName fullName userName",
 						},
+						{
+							path: "totalProducts",
+						},
 					],
 					customLabels: {
 						docs: "data",
