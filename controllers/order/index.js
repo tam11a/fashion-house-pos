@@ -112,6 +112,9 @@ exports.getAll = async (req, res, next) => {
 						{
 							path: "customer",
 						},
+						{
+							path: "branch",
+						},
 					],
 					customLabels: {
 						docs: "data",
