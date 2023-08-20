@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 var productSchema = new mongoose.Schema(
 	{
+		barcode: {
+			type: String,
+			unique: true,
+			required: [true, "Please Provide a Barcode"], // If Required
+			trim: true,
+		},
 		name: {
 			type: String,
 			required: [true, "Please Provide a Name"], // If Required

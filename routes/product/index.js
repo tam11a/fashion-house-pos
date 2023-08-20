@@ -2,9 +2,17 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, create, update, activeInactive } = require("../../controllers/product");
+const {
+	getAll,
+	byID,
+	create,
+	update,
+	activeInactive,
+	generatemockbarcode,
+} = require("../../controllers/product");
 
 // Get All API
+
 /**
  * @swagger
  * /api/product:
@@ -43,6 +51,21 @@ const { getAll, byID, create, update, activeInactive } = require("../../controll
  *
  */
 router.route("/").get(protect, query, getAll);
+
+/**
+ * @swagger
+ * /api/product/generate-barcode:
+ *  get:
+ *    tags: [Product]
+ *    summary: Generate mock barcode
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *
+ */
+router.route("/generate-barcode").get(generatemockbarcode);
 
 // Get Product API
 /**
