@@ -14,7 +14,7 @@ var customerSchema = new mongoose.Schema(
 		},
 		phone: {
 			type: String,
-			validate: [/01\d{9}$/, "Invalid Phone Number"],
+			validate: [/^(?:\+88)01\d{9}$/, "Invalid Phone Number"],
 			required: [true, "Please Provide a Phone Number"],
 			unique: [true, "Phone Number is already registered"],
 		},

@@ -71,7 +71,7 @@ exports.getAll = async (req, res, next) => {
 						},
 						{
 							path: "shipment",
-							select: "supplier",
+							select: "supplier createdAt updatedAt",
 							populate: [
 								{
 									path: "supplier",
