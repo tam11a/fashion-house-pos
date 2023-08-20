@@ -8,8 +8,16 @@ const { default: mongoose } = require("mongoose");
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { invoice, customer, type, discount, products, tailor, transactions } =
-		req.body;
+	const {
+		invoice,
+		customer,
+		branch,
+		type,
+		discount,
+		products,
+		tailor,
+		transactions,
+	} = req.body;
 
 	try {
 		// Store Admin to DB
@@ -26,17 +34,16 @@ exports.create = async (req, res, next) => {
 
 		const order = await Order.create({
 			invoice,
+			branch,
 			customer,
 			type,
 			discount,
 			total,
-			transaction: Array.from(transactions || [], ({ paid, method }) => (
-				{
-					amount: paid,
-					method,
-					receivedBy: req.createdBy.createdBy,
-				}
-			)),
+			transaction: Array.from(transactions || [], ({ paid, method }) => ({
+				amount: paid,
+				method,
+				receivedBy: req.createdBy.createdBy,
+			})),
 			...req.createdBy,
 		});
 
@@ -84,8 +91,7 @@ exports.create = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-	const { customer } = req.query;
-
+	const { customer, branch } = req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -97,6 +103,7 @@ exports.getAll = async (req, res, next) => {
 					}),
 					...fieldsQuery({
 						customer,
+						branch,
 					}),
 				},
 				{
@@ -133,6 +140,9 @@ exports.byID = async (req, res, next) => {
 		const order = await Order.findById(order_id).populate([
 			{
 				path: "customer",
+			},
+			{
+				path: "branch",
 			},
 		]);
 

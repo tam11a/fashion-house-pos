@@ -6,6 +6,11 @@ var orderSchema = new mongoose.Schema(
 			type: String,
 			unique: [true, "Invoice ID exists, Please try again"],
 		},
+		branch: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Branch",
+			required: [true, "Please Provide Branch Id"],
+		},
 		customer: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Customer",
@@ -44,7 +49,7 @@ var orderSchema = new mongoose.Schema(
 					type: String,
 					required: [true, "Please Provide Payment Method"], // If Required
 					enum: {
-						values: ["COD", "Card", "Cash", "bKash"],
+						values: ["COD", "Card", "Cash", "bKash", "Nagad", "Rocket"],
 						message: "{VALUE} is not supported as payment method",
 					},
 					default: "Cash",
@@ -79,13 +84,15 @@ module.exports = Order;
  *     type: object
  *     required:
  *        - invoice
+ *        - branch
  *        - customer
  *        - type
  *        - products
- *        - method
- *        - paid
+ *        - transactions
  *     properties:
  *       invoice:
+ *         type: string
+ *       branch:
  *         type: string
  *       customer:
  *         type: string
@@ -109,12 +116,15 @@ module.exports = Order;
  *                   type: string
  *                 fee:
  *                   type: number
- *       method:
- *         type: string
- *         enum: [Cash, Card, bKash, COD]
+ *       transactions:
+ *         type: object
+ *         properties:
+ *           method:
+ *             type: string
+ *             enum: [Cash, Card, bKash, Nagad, Rocket, COD]
+ *           paid:
+ *             type: number
  *       discount:
- *         type: number
- *       paid:
  *         type: number
  *
  */
@@ -133,6 +143,6 @@ module.exports = Order;
  *         type: number
  *       method:
  *         type: string
- *         enum: [Cash, Card, bKash, COD]
+ *         enum: [Cash, Card, bKash, Nagad, Rocket, COD]
  *
  */

@@ -21,6 +21,13 @@ var subcategorySchema = new mongoose.Schema(
 	{ timestamps: true, id: false }
 );
 
+subcategorySchema.virtual("totalProducts", {
+	ref: "Product",
+	localField: "_id",
+	foreignField: "subcategory",
+	count: true,
+});
+
 subcategorySchema.set("toObject", { virtuals: true });
 subcategorySchema.set("toJSON", { virtuals: true });
 

@@ -59,9 +59,6 @@ module.exports = router;
  *      - in: query
  *        name: status
  *        type: string
- *      - in: query
- *        name: customer
- *        type: string
  *        enum:
  *          - Pending
  *          - Confirmed
@@ -69,6 +66,12 @@ module.exports = router;
  *          - Delivered
  *          - Canceled
  *          - Returned
+ *      - in: query
+ *        name: branch
+ *        type: string
+ *      - in: query
+ *        name: customer
+ *        type: string
  *    responses:
  *      200:
  *        description: Get successful
