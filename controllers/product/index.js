@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Product = require("../../models/Product");
+const { generate } = require("../../utils/barcode");
 
 exports.getAll = async (req, res, next) => {
 	const { category, subcategory, isActive } = req.query;
@@ -13,7 +14,11 @@ exports.getAll = async (req, res, next) => {
 				{
 					...(req.search && {
 						$or: [
-							...queryObjectBuilder(req.search, ["name", "description", "category.name", "subcategory.name"], true),
+							...queryObjectBuilder(
+								req.search,
+								["name", "description", "category.name", "subcategory.name"],
+								true
+							),
 						],
 					}),
 					...fieldsQuery({
@@ -67,6 +72,7 @@ exports.create = async (req, res, next) => {
 	const { name, description, category, subcategory, price } = req.body;
 
 	try {
+		const barcode = await generate();
 		// Store Admin to DB
 		const product = await Product.create({
 			name,
@@ -74,6 +80,7 @@ exports.create = async (req, res, next) => {
 			category,
 			subcategory,
 			price,
+			barcode,
 			...req.createdBy,
 		});
 
@@ -146,8 +153,9 @@ exports.activeInactive = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			message: `Product ${user.isActive ? "deactivated" : "activated"
-				} successfully`,
+			message: `Product ${
+				user.isActive ? "deactivated" : "activated"
+			} successfully`,
 		});
 
 		// On Error

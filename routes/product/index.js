@@ -2,9 +2,16 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../../middleware/auth");
 const { query } = require("../../middleware/query");
-const { getAll, byID, create, update, activeInactive } = require("../../controllers/product");
+const {
+	getAll,
+	byID,
+	create,
+	update,
+	activeInactive,
+} = require("../../controllers/product");
 
 // Get All API
+
 /**
  * @swagger
  * /api/product:

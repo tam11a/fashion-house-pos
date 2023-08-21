@@ -79,7 +79,7 @@ exports.byID = async (req, res, next) => {
 			}).populate(scan_populate);
 		else
 			item = await Item.findOne({
-				product: scan_id,
+				product: { $subquery: { barcode: scan_id } },
 				orderLine: null,
 				branch: branch_id,
 			}).populate(scan_populate);
