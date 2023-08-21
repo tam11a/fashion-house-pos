@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Product = require("../../models/Product");
+const { generate } = require("../../utils/barcode");
 
 exports.getAll = async (req, res, next) => {
 	const { category, subcategory, isActive } = req.query;
@@ -71,6 +72,7 @@ exports.create = async (req, res, next) => {
 	const { name, description, category, subcategory, price } = req.body;
 
 	try {
+		const barcode = await generate();
 		// Store Admin to DB
 		const product = await Product.create({
 			name,
@@ -78,6 +80,7 @@ exports.create = async (req, res, next) => {
 			category,
 			subcategory,
 			price,
+			barcode,
 			...req.createdBy,
 		});
 
