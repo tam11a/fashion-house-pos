@@ -2,22 +2,6 @@ const { default: mongoose } = require("mongoose");
 const ErrorResponse = require("../../utils/errorResponse");
 const { queryObjectBuilder, fieldsQuery } = require("../../utils/fieldsQuery");
 const Product = require("../../models/Product");
-const { generate } = require("../../utils/barcode");
-
-exports.generatemockbarcode = async (req, res, next) => {
-	// (await Product.find()).forEach(async (product) => {
-	// 	product.barcode = await generate();
-	// 	await product.save();
-	// 	console.log(
-	// 		"generated barcode for " + product.name + " is " + product.barcode
-	// 	);
-	// });
-	res.status(200).json({
-		success: true,
-		message: "Barcode generated successfully",
-		generated: await generate(),
-	});
-};
 
 exports.getAll = async (req, res, next) => {
 	const { category, subcategory, isActive } = req.query;

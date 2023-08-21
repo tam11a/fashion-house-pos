@@ -1,5 +1,15 @@
-const { customAlphabet } = import("nanoid");
 const Product = require("../models/Product");
+
+const customAlphabet = (alphabet, defaultSize = 21) => {
+	return (size = defaultSize) => {
+		let id = "";
+		let i = size;
+		while (i--) {
+			id += alphabet[(Math.random() * alphabet.length) | 0];
+		}
+		return id;
+	};
+};
 
 const alphabet =
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

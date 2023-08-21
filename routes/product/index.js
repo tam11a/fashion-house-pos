@@ -8,7 +8,6 @@ const {
 	create,
 	update,
 	activeInactive,
-	generatemockbarcode,
 } = require("../../controllers/product");
 
 // Get All API
@@ -51,21 +50,6 @@ const {
  *
  */
 router.route("/").get(protect, query, getAll);
-
-/**
- * @swagger
- * /api/product/generate-barcode:
- *  get:
- *    tags: [Product]
- *    summary: Generate mock barcode
- *    responses:
- *      200:
- *        description: Get successful
- *      400:
- *        description: Bad Request
- *
- */
-router.route("/generate-barcode").get(generatemockbarcode);
 
 // Get Product API
 /**
