@@ -36,6 +36,16 @@ var productSchema = new mongoose.Schema(
 	{ timestamps: true, id: false }
 );
 
+productSchema.virtual("availableItems", {
+	ref: "Item",
+	localField: "_id",
+	foreignField: "product",
+	match: {
+		orderLine: null,
+	},
+	count: true,
+});
+
 productSchema.virtual("totalItems", {
 	ref: "Item",
 	localField: "_id",
