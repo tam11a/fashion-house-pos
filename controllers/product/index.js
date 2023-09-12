@@ -49,7 +49,7 @@ exports.getAll = async (req, res, next) => {
 							select: "firstName lastName fullName userName",
 						},
 						{
-							path: "availableItems",
+							path: "totalEnteredItems",
 						},
 						{
 							path: "totalItems",
