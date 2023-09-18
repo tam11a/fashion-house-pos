@@ -116,11 +116,18 @@ exports.getAll = async (req, res, next) => {
 						salesman,
 						type,
 					}),
-					// ...(hasDue && {
-
-					// })
-					due: {
-						$gte: 1,
+					$expr: {
+						$gt: [
+							{
+								$subtract: [
+									{ $subtract: ["$total", "$discount"] },
+									{
+										$sum: "$transaction.amount",
+									},
+								],
+							},
+							1,
+						],
 					},
 				},
 				{
