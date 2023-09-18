@@ -93,7 +93,7 @@ exports.create = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-	const { customer, branch, salesman, type, hasDue, mfs, fromDate, toDate } =
+	const { customer, branch, salesman, type, minDue, mfs, fromDate, toDate } =
 		req.query;
 	try {
 		res.status(200).json({
@@ -116,19 +116,40 @@ exports.getAll = async (req, res, next) => {
 						salesman,
 						type,
 					}),
-					$expr: {
-						$gt: [
-							{
-								$subtract: [
-									{ $subtract: ["$total", "$discount"] },
-									{
-										$sum: "$transaction.amount",
-									},
-								],
+					...(minDue && {
+						$expr: {
+							$gte: [
+								{
+									$subtract: [
+										{ $subtract: ["$total", "$discount"] },
+										{
+											$sum: "$transaction.amount",
+										},
+									],
+								},
+								parseFloat(minDue),
+							],
+						},
+					}),
+					...(mfs && {
+						transaction: {
+							$elemMatch: {
+								method: {
+									$eq: mfs,
+								},
 							},
-							1,
-						],
-					},
+						},
+					}),
+					...((fromDate || toDate) && {
+						createdAt: {
+							...(fromDate && {
+								$gte: fromDate,
+							}),
+							...(toDate && {
+								$lte: toDate,
+							}),
+						},
+					}),
 				},
 				{
 					...req.pagination,

@@ -79,8 +79,8 @@ module.exports = router;
  *        name: type
  *        type: string
  *      - in: query
- *        name: hasDue
- *        type: string
+ *        name: minDue
+ *        type: number
  *      - in: query
  *        name: mfs
  *        type: string
