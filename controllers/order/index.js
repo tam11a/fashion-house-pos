@@ -17,6 +17,7 @@ exports.create = async (req, res, next) => {
 		products,
 		tailor,
 		transactions,
+		salesman,
 	} = req.body;
 
 	try {
@@ -36,6 +37,7 @@ exports.create = async (req, res, next) => {
 			invoice,
 			branch,
 			customer,
+			salesman,
 			type,
 			discount,
 			total,
@@ -91,7 +93,8 @@ exports.create = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-	const { customer, branch } = req.query;
+	const { customer, branch, salesman, type, hasDue, mfs, fromDate, toDate } =
+		req.query;
 	try {
 		res.status(200).json({
 			success: true,
@@ -99,12 +102,26 @@ exports.getAll = async (req, res, next) => {
 			...(await Order.paginate(
 				{
 					...(req.search && {
-						$or: [...queryObjectBuilder(req.search, ["invoice"], true)],
+						$or: [
+							...queryObjectBuilder(
+								req.search,
+								["invoice", "customer.name", "customer.phone"],
+								true
+							),
+						],
 					}),
 					...fieldsQuery({
 						customer,
 						branch,
+						salesman,
+						type,
 					}),
+					// ...(hasDue && {
+
+					// })
+					due: {
+						$gte: 1,
+					},
 				},
 				{
 					...req.pagination,
@@ -114,6 +131,10 @@ exports.getAll = async (req, res, next) => {
 						},
 						{
 							path: "branch",
+						},
+						{
+							path: "salesman",
+							select: "firstName lastName userName",
 						},
 					],
 					customLabels: {
@@ -146,6 +167,10 @@ exports.byID = async (req, res, next) => {
 			},
 			{
 				path: "branch",
+			},
+			{
+				path: "salesman",
+				select: "firstName lastName userName",
 			},
 		]);
 
