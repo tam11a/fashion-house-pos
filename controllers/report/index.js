@@ -269,3 +269,56 @@ exports.range = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.product = async (req, res, next) => {
+	try {
+		const branches = await Branch.find();
+
+		var data = {};
+
+		for await (const branch of branches) {
+			await Item.countDocuments({
+				branch: branch._id,
+				product: req.params.id,
+				orderLine: {
+					$eq: null,
+				},
+			})
+				.then((count) => {
+					data[branch.name] = count;
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+
+		const central_inventory = await Item.countDocuments({
+			branch: {
+				$eq: null,
+			},
+			product: req.params.id,
+			orderLine: {
+				$eq: null,
+			},
+		});
+
+		const total = await Item.countDocuments({
+			product: req.params.id,
+			orderLine: {
+				$eq: null,
+			},
+		});
+
+		res.status(200).json({
+			success: true,
+			message: "Product Report",
+			data: {
+				...data,
+				Inventory: central_inventory,
+				Total: total,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};

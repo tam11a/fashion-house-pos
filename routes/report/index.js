@@ -48,4 +48,29 @@ router
  */
 router.route("/range").get(protect, require("../../controllers/report").range);
 
+/**
+ * @swagger
+ * /api/report/product/{id}:
+ *  get:
+ *    tags: [Report]
+ *    summary: Get Product Report
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Product Id
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *
+ */
+router
+	.route("/product/:id")
+	.get(protect, require("../../controllers/report").product);
+
 module.exports = router;
