@@ -278,6 +278,13 @@ exports.range = async (req, res, next) => {
 		const top5Salesman = await Order.aggregate([
 			{
 				$match: {
+					salesman: {
+						$ne: null,
+					},
+				},
+			},
+			{
+				$match: {
 					...(branch && {
 						branch: {
 							$eq: ObjectId(branch),
