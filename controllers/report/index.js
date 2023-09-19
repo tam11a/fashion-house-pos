@@ -3,6 +3,7 @@ const Branch = require("../../models/Branch");
 const Customer = require("../../models/Customer");
 const Item = require("../../models/Item");
 const Order = require("../../models/Order");
+const PettyCash = require("../../models/PettyCash");
 const Product = require("../../models/Product");
 const ObjectId = require("mongoose").Types.ObjectId;
 
@@ -134,6 +135,40 @@ exports.range = async (req, res, next) => {
 			},
 		]);
 
+		const totalPettyCash = await PettyCash.aggregate([
+			{
+				$match: {
+					...(branch && {
+						branch: {
+							$eq: ObjectId(branch),
+						},
+					}),
+				},
+			},
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								...(fromDate && {
+									$gte: new Date(fromDate),
+								}),
+								...(toDate && {
+									$lte: new Date(toDate),
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					total: { $sum: "$amount" },
+				},
+			},
+		]);
+
 		const totalDue = await Order.aggregate([
 			{
 				$match: {
@@ -227,6 +262,7 @@ exports.range = async (req, res, next) => {
 				}),
 				totalSales: totalSales?.[0]?.total || 0,
 				totalDue: totalDue?.[0]?.total || 0,
+				totalPettyCash: totalPettyCash?.[0]?.total || 0,
 			},
 		});
 	} catch (error) {
