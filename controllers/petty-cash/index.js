@@ -13,7 +13,12 @@ exports.getAll = async (req, res, next) => {
 						$or: [
 							...queryObjectBuilder(
 								req.search,
-								["branch.name", "createdBy.firstName", "createdBy.lastName"],
+								[
+									"reason",
+									"branch.name",
+									"createdBy.firstName",
+									"createdBy.lastName",
+								],
 								true
 							),
 						],
