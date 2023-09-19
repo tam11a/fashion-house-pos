@@ -4,6 +4,7 @@ const Customer = require("../../models/Customer");
 const Item = require("../../models/Item");
 const Order = require("../../models/Order");
 const Product = require("../../models/Product");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 exports.global = async (req, res, next) => {
 	// const totalSales = await Order.aggregate([
@@ -99,6 +100,100 @@ exports.range = async (req, res, next) => {
 	try {
 		const { branch, fromDate, toDate } = req.query;
 
+		const totalSales = await Order.aggregate([
+			{
+				$match: {
+					...(branch && {
+						branch: {
+							$eq: ObjectId(branch),
+						},
+					}),
+				},
+			},
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								...(fromDate && {
+									$gte: new Date(fromDate),
+								}),
+								...(toDate && {
+									$lte: new Date(toDate),
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					total: { $sum: "$total" },
+				},
+			},
+		]);
+
+		const totalDue = await Order.aggregate([
+			{
+				$match: {
+					...(branch && {
+						branch: {
+							$eq: ObjectId(branch),
+						},
+					}),
+				},
+			},
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								...(fromDate && {
+									$gte: new Date(fromDate),
+								}),
+								...(toDate && {
+									$lte: new Date(toDate),
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				$match: {
+					$expr: {
+						$gte: [
+							{
+								$subtract: [
+									{ $subtract: ["$total", "$discount"] },
+									{
+										$sum: "$transaction.amount",
+									},
+								],
+							},
+							0,
+						],
+					},
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					total: {
+						$sum: {
+							$subtract: [
+								{ $subtract: ["$total", "$discount"] },
+								{
+									$sum: "$transaction.amount",
+								},
+							],
+						},
+					},
+				},
+			},
+		]);
+
 		res.status(200).json({
 			success: true,
 			message: "Range Report",
@@ -115,7 +210,7 @@ exports.range = async (req, res, next) => {
 						},
 					}),
 				}),
-				totalOrders: await Order.countDocuments({
+				newOrders: await Order.countDocuments({
 					...(branch && {
 						branch,
 					}),
@@ -130,6 +225,8 @@ exports.range = async (req, res, next) => {
 						},
 					}),
 				}),
+				totalSales: totalSales?.[0]?.total || 0,
+				totalDue: totalDue?.[0]?.total || 0,
 			},
 		});
 	} catch (error) {
