@@ -359,6 +359,118 @@ exports.range = async (req, res, next) => {
 			},
 		]);
 
+		const newOrders = await Order.countDocuments({
+			...(branch && {
+				branch,
+			}),
+			...((fromDate || toDate) && {
+				createdAt: {
+					...(fromDate && {
+						$gte: fromDate,
+					}),
+					...(toDate && {
+						$lte: toDate,
+					}),
+				},
+			}),
+		});
+
+		var typeWisePercentage = await Order.aggregate([
+			{
+				$match: {
+					...(branch && {
+						branch: {
+							$eq: ObjectId(branch),
+						},
+					}),
+				},
+			},
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								...(fromDate && {
+									$gte: new Date(fromDate),
+								}),
+								...(toDate && {
+									$lte: new Date(toDate),
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: "$type", // Group by payment method
+					total: { $sum: 1 }, // Calculate the total amount for each method
+				},
+			},
+		]);
+
+		typeWisePercentage?.flatMap((item) => {
+			item.percentage = parseFloat(((item.total / newOrders) * 100).toFixed(2));
+			return item;
+		});
+
+		var branchWisePercentage = await Order.aggregate([
+			// {
+			// 	$match: {
+			// 		...(branch && {
+			// 			branch: {
+			// 				$eq: ObjectId(branch),
+			// 			},
+			// 		}),
+			// 	},
+			// },
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								...(fromDate && {
+									$gte: new Date(fromDate),
+								}),
+								...(toDate && {
+									$lte: new Date(toDate),
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: "$branch", // Group by payment method
+					total: { $sum: 1 }, // Calculate the total amount for each method
+				},
+			},
+			{
+				$project: {
+					_id: 0,
+					branch: "$_id",
+					branchData: {
+						$arrayElemAt: ["$branchData", 0], // Get the name of the salesman
+					},
+					total: 1,
+				},
+			},
+			{
+				$lookup: {
+					from: "branches", // Assuming the branch data is in the "branches" collection
+					localField: "branch",
+					foreignField: "_id",
+					as: "branchData",
+				},
+			},
+		]);
+
+		branchWisePercentage?.flatMap((item) => {
+			item.percentage = parseFloat(((item.total / newOrders) * 100).toFixed(2));
+			return item;
+		});
+
 		res.status(200).json({
 			success: true,
 			message: "Range Report",
@@ -375,21 +487,7 @@ exports.range = async (req, res, next) => {
 						},
 					}),
 				}),
-				newOrders: await Order.countDocuments({
-					...(branch && {
-						branch,
-					}),
-					...((fromDate || toDate) && {
-						createdAt: {
-							...(fromDate && {
-								$gte: fromDate,
-							}),
-							...(toDate && {
-								$lte: toDate,
-							}),
-						},
-					}),
-				}),
+				newOrders,
 				totalSales: totalSales?.[0]?.total || 0,
 				totalDue: totalDue?.[0]?.total || 0,
 				totalPettyCash: totalPettyCash?.[0]?.total || 0,
@@ -401,6 +499,8 @@ exports.range = async (req, res, next) => {
 					};
 				}, {}),
 				topSalesman: top5Salesman,
+				typeWisePercentage,
+				branchWisePercentage,
 			},
 		});
 	} catch (error) {

@@ -8,8 +8,8 @@ const router = express.Router();
  *  get:
  *    tags: [Report]
  *    summary: Get Global Report
- *    security:
- *      - bearer: []
+ *  #  security:
+ *  #    - bearer: []
  *    responses:
  *      200:
  *        description: Get successful
@@ -17,9 +17,10 @@ const router = express.Router();
  *        description: Bad Request
  *
  */
-router
-	.route("/global")
-	.get(protect, require("../../controllers/report").global);
+router.route("/global").get(
+	// protect,
+	require("../../controllers/report").global
+);
 
 /**
  * @swagger
@@ -27,8 +28,8 @@ router
  *  get:
  *    tags: [Report]
  *    summary: Get Range Report
- *    security:
- *      - bearer: []
+ *  #  security:
+ *  #    - bearer: []
  *    parameters:
  *      - in: query
  *        name: branch
@@ -46,7 +47,10 @@ router
  *        description: Bad Request
  *
  */
-router.route("/range").get(protect, require("../../controllers/report").range);
+router.route("/range").get(
+	// protect,
+	require("../../controllers/report").range
+);
 
 /**
  * @swagger
@@ -54,8 +58,8 @@ router.route("/range").get(protect, require("../../controllers/report").range);
  *  get:
  *    tags: [Report]
  *    summary: Get Product Report
- *    security:
- *      - bearer: []
+ *  #  security:
+ *  #    - bearer: []
  *    parameters:
  *      - in: path
  *        name: id
@@ -69,8 +73,9 @@ router.route("/range").get(protect, require("../../controllers/report").range);
  *        description: Bad Request
  *
  */
-router
-	.route("/product/:id")
-	.get(protect, require("../../controllers/report").product);
+router.route("/product/:id").get(
+	// protect,
+	require("../../controllers/report").product
+);
 
 module.exports = router;
