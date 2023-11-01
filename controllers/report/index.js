@@ -8,71 +8,76 @@ const Product = require("../../models/Product");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 exports.global = async (req, res, next) => {
-	// const totalSales = await Order.aggregate([
-	// 	{
-	// 		$group: {
-	// 			_id: null,
-	// 			total: { $sum: "$total" },
-	// 		},
-	// 	},
-	// ]);
-	// const totalDiscount = await Order.aggregate([
-	// 	{
-	// 		$group: {
-	// 			_id: null,
-	// 			total: { $sum: "$discount" },
-	// 		},
-	// 	},
-	// ]);
-
-	// const totalDue = await Order.aggregate([
-	// 	{
-	// 		$match: {
-	// 			$expr: {
-	// 				$gte: [
-	// 					{
-	// 						$subtract: [
-	// 							{ $subtract: ["$total", "$discount"] },
-	// 							{
-	// 								$sum: "$transaction.amount",
-	// 							},
-	// 						],
-	// 					},
-	// 					0,
-	// 				],
-	// 			},
-	// 		},
-	// 	},
-	// 	{
-	// 		$group: {
-	// 			_id: null,
-	// 			total: {
-	// 				$sum: {
-	// 					$subtract: [
-	// 						{ $subtract: ["$total", "$discount"] },
-	// 						{
-	// 							$sum: "$transaction.amount",
-	// 						},
-	// 					],
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// ]);
-
-	// const totalPaid = await Order.aggregate([
-	// 	{
-	// 		$group: {
-	// 			_id: null,
-	// 			total: {
-	// 				$sum: {
-	// 					$sum: "$transaction.amount",
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// ]);
 	try {
+		// Calculate the date 1 year ago from the current date
+		const oneYearAgo = new Date();
+		oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+		var lastOneYearPerMonth = await Order.aggregate([
+			{
+				$match: {
+					createdAt: { $gte: oneYearAgo }, // Filter orders within the last year
+				},
+			},
+			{
+				$group: {
+					_id: { $month: "$createdAt" }, // Group by month
+					totalSales: { $sum: { $subtract: ["$total", "$discount"] } }, // Calculate the sum of 'amount' field for each group
+				},
+			},
+			{
+				$project: {
+					_id: 0, // Exclude the default _id field
+					month: "$_id",
+					totalSales: 1,
+				},
+			},
+			{
+				$sort: { month: 1 }, // Sort the results by month
+			},
+		]);
+
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
+
+		const monthsInLastYear = Array.from({ length: 12 }, (_, i) => i + 1);
+
+		// Initialize a map with blank months
+		const monthSalesMap = new Map(
+			monthsInLastYear.map((month) => [month, { month, totalSales: 0 }])
+		);
+
+		// Update the map with the actual sales data
+		lastOneYearPerMonth.forEach((sale) => {
+			const monthName = monthNames[sale.month - 1]; // Get the month name
+			monthSalesMap.set(sale.month, {
+				month: monthName,
+				totalSales: sale.totalSales,
+			});
+		});
+
+		// Convert the map values back to an array
+		lastOneYearPerMonth = Array.from(monthSalesMap.values(), (item) =>
+			typeof item.month === "string"
+				? item
+				: {
+						...item,
+						month: monthNames[item.month - 1],
+				  }
+		);
+
 		res.status(200).json({
 			success: true,
 			message: "Global Report",
@@ -90,6 +95,7 @@ exports.global = async (req, res, next) => {
 				// totalDue: totalDue[0].total,
 				// totalPaid: totalPaid[0].total,
 				// totalDiscount: totalDiscount[0].total,
+				lastOneYearPerMonth,
 			},
 		});
 	} catch (error) {
