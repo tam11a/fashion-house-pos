@@ -1,11 +1,12 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
 const {
-	create,
-	getAll,
-	byID,
-	addTransaction,
-	ItemsByID,
+  create,
+  getAll,
+  byID,
+  download,
+  addTransaction,
+  ItemsByID,
 } = require("../../controllers/order");
 const { query } = require("../../middleware/query");
 const router = express.Router();
@@ -180,3 +181,32 @@ router.route("/:order_id").get(byID);
  *
  */
 router.route("/:order_id/transaction").patch(protect, addTransaction);
+
+// Get All API
+/**
+ * @swagger
+ * /api/download:
+ *  get:
+ *    tags: [download]
+ *    summary: Download All Order List
+ *    security:
+ *      - bearer: []
+ *    parameters:
+ *      - in: query
+ *        name: sale_type
+ *        type: string
+ *      - in: query
+ *        name: fromDate
+ *        type: date
+ *      - in: query
+ *        name: toDate
+ *        type: date
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ */
+router.route("/download").get(protect, query, download);
