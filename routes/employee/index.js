@@ -1,11 +1,12 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
 const {
-	register,
-	getAll,
-	byID,
-	activeInactive,
-	update,
+  register,
+  getAll,
+  byID,
+  resetpassword,
+  activeInactive,
+  update,
 } = require("../../controllers/employee");
 const { query } = require("../../middleware/query");
 const router = express.Router();
@@ -159,5 +160,31 @@ router.route("/:employee_id").put(protect, activeInactive);
  *
  */
 router.route("/:employee_id").patch(protect, update);
+// resetpassword API
+/**
+ * @swagger
+ * /api/employee/resetpassword:
+ *  post:
+ *    tags: [Employee]
+ *    summary: Reset Password
+ *    security:
+ *      - bearer: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *              $ref: '#/components/schemas/passwordreset'
+ *
+ *    responses:
+ *      200:
+ *        description: Update successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/resetpassword").post(protect, resetpassword);
 
 module.exports = router;
