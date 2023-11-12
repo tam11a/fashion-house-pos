@@ -12,6 +12,7 @@ router.use("/order", require("./order"));
 router.use("/permission", require("./permission"));
 router.use("/petty-cash", require("./petty-cash"));
 router.use("/product", require("./product"));
+router.use("/report", require("./report"));
 router.use("/return", require("./return"));
 router.use("/role", require("./role"));
 router.use("/scan", require("./scan"));

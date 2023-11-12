@@ -72,6 +72,24 @@ module.exports = router;
  *      - in: query
  *        name: customer
  *        type: string
+ *      - in: query
+ *        name: salesman
+ *        type: string
+ *      - in: query
+ *        name: type
+ *        type: string
+ *      - in: query
+ *        name: minDue
+ *        type: number
+ *      - in: query
+ *        name: mfs
+ *        type: string
+ *      - in: query
+ *        name: fromDate
+ *        type: date
+ *      - in: query
+ *        name: toDate
+ *        type: date
  *    responses:
  *      200:
  *        description: Get successful

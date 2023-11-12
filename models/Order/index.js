@@ -16,6 +16,11 @@ var orderSchema = new mongoose.Schema(
 			ref: "Customer",
 			required: [true, "Please Provide Customer Id"],
 		},
+		salesman: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Admin",
+			default: null,
+		},
 		type: {
 			type: String,
 			enum: {
@@ -70,6 +75,23 @@ var orderSchema = new mongoose.Schema(
 	{ timestamps: true, id: false }
 );
 
+orderSchema.virtual("mfs").get(function () {
+	return this.transaction.reduce((a, b) => `${b.method} ${a}`.trim(), "");
+});
+
+orderSchema.virtual("transactions_count").get(function () {
+	return this.transaction.length;
+});
+
+orderSchema.virtual("paid").get(function () {
+	return this.transaction.reduce((a, b) => a + b.amount, 0);
+});
+
+orderSchema.virtual("due").get(function () {
+	const paid = this.transaction.reduce((a, b) => a + b.amount, 0);
+	return this.total - paid - this.discount;
+});
+
 orderSchema.set("toObject", { virtuals: true });
 orderSchema.set("toJSON", { virtuals: true });
 
@@ -97,6 +119,8 @@ module.exports = Order;
  *       customer:
  *         type: string
  *       tailor:
+ *         type: string
+ *       salesman:
  *         type: string
  *       type:
  *         type: string
