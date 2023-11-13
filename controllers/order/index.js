@@ -182,36 +182,77 @@ exports.getAll = async (req, res, next) => {
 exports.download = async (req, res, next) => {
   const { fromDate, toDate, sale_type } = req.query;
   try {
-    res.status(200).json({
-      success: true,
-      message: "Order List",
-      data: await Order.find({
-        where: {
-          ...fieldsQuery({
-            fromDate,
-            toDate,
-            sale_type,
-          }),
-          ...((fromDate || toDate) && {
-            createdAt: {
-              ...(fromDate && {
-                $gte: fromDate,
-              }),
-              ...(toDate && {
-                $lte: toDate,
-              }),
-            },
-          }),
-        },
-      }),
+    const cursor = await Order.find({
+      where: {
+        ...fieldsQuery({
+          fromDate,
+          toDate,
+          sale_type,
+        }),
+        ...((fromDate || toDate) && {
+          createdAt: {
+            ...(fromDate && {
+              $gte: fromDate,
+            }),
+            ...(toDate && {
+              $lte: toDate,
+            }),
+          },
+        }),
+      },
     });
 
+    const transformer = (doc) => {
+      return {
+        Id: doc._id,
+        Invoice: doc.invoice,
+        Name: doc.customer_name,
+        Address: doc.customer_address,
+        Type: doc.type,
+      };
+    };
+
+    const filename = "export.csv";
+
+    res.setHeader("Content-disposition", `attachment; filename=${filename}`);
+    res.writeHead(200, { "Content-Type": "text/csv" });
+
+    res.flushHeaders();
+
+    var csvStream = fastCsv
+      .createWriteStream({ headers: true })
+      .transform(transformer);
+    cursor.stream().pipe(csvStream).pipe(res);
     // On Error
   } catch (error) {
     // Send Error Response
     next(error);
   }
 };
+
+// const cursor = download.getAll();
+
+// const transformer = (doc) => {
+//   return {
+//     Id: doc.order_id,
+//     iID: doc.invoice_id,
+//     Name: doc.customer_name,
+//     Address: doc.customer_address,
+//   };
+// };
+
+// const filename = "export.csv";
+
+// res.setHeader("Content-disposition", `attachment; filename=${filename}`);
+// res.writeHead(200, { "Content-Type": "text/csv" });
+
+// res.flushHeaders();
+
+// var csvStream = fastCsv
+//   .createWriteStream({ headers: true })
+//   .transform(transformer);
+// cursor.stream().pipe(csvStream).pipe(res);
+
 exports.byID = async (req, res, next) => {
   // Get Values
   const { order_id } = req.params;
