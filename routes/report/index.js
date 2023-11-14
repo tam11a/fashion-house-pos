@@ -35,6 +35,9 @@ router.route("/global").get(
  *        name: branch
  *        type: string
  *      - in: query
+ *        name: type
+ *        type: string
+ *      - in: query
  *        name: fromDate
  *        type: date
  *      - in: query

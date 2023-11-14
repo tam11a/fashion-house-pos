@@ -6,6 +6,7 @@ const Order = require("../../models/Order");
 const PettyCash = require("../../models/PettyCash");
 const Product = require("../../models/Product");
 const ObjectId = require("mongoose").Types.ObjectId;
+const { fieldsQuery } = require("../../utils/fieldsQuery");
 
 exports.global = async (req, res, next) => {
 	try {
@@ -105,7 +106,7 @@ exports.global = async (req, res, next) => {
 
 exports.range = async (req, res, next) => {
 	try {
-		const { branch, fromDate, toDate } = req.query;
+		const { branch, fromDate, toDate, type } = req.query;
 
 		const totalSales = await Order.aggregate([
 			{
@@ -114,6 +115,13 @@ exports.range = async (req, res, next) => {
 						branch: {
 							$eq: ObjectId(branch),
 						},
+					}),
+				},
+			},
+			{
+				$match: {
+					...fieldsQuery({
+						type,
 					}),
 				},
 			},
@@ -153,6 +161,13 @@ exports.range = async (req, res, next) => {
 			},
 			{
 				$match: {
+					...fieldsQuery({
+						type,
+					}),
+				},
+			},
+			{
+				$match: {
 					$and: [
 						{
 							createdAt: {
@@ -182,6 +197,13 @@ exports.range = async (req, res, next) => {
 						branch: {
 							$eq: ObjectId(branch),
 						},
+					}),
+				},
+			},
+			{
+				$match: {
+					...fieldsQuery({
+						type,
 					}),
 				},
 			},
@@ -249,6 +271,13 @@ exports.range = async (req, res, next) => {
 			},
 			{
 				$match: {
+					...fieldsQuery({
+						type,
+					}),
+				},
+			},
+			{
+				$match: {
 					$and: [
 						{
 							createdAt: {
@@ -287,6 +316,13 @@ exports.range = async (req, res, next) => {
 					salesman: {
 						$ne: null,
 					},
+				},
+			},
+			{
+				$match: {
+					...fieldsQuery({
+						type,
+					}),
 				},
 			},
 			{
@@ -369,6 +405,9 @@ exports.range = async (req, res, next) => {
 			...(branch && {
 				branch,
 			}),
+			...fieldsQuery({
+				type,
+			}),
 			...((fromDate || toDate) && {
 				createdAt: {
 					...(fromDate && {
@@ -421,15 +460,13 @@ exports.range = async (req, res, next) => {
 		});
 
 		var branchWisePercentage = await Order.aggregate([
-			// {
-			// 	$match: {
-			// 		...(branch && {
-			// 			branch: {
-			// 				$eq: ObjectId(branch),
-			// 			},
-			// 		}),
-			// 	},
-			// },
+			{
+				$match: {
+					...fieldsQuery({
+						type,
+					}),
+				},
+			},
 			{
 				$match: {
 					$and: [
