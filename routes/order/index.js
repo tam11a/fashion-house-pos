@@ -1,12 +1,12 @@
 const express = require("express");
 const { protect } = require("../../middleware/auth");
 const {
-  create,
-  getAll,
-  byID,
-  download,
-  addTransaction,
-  ItemsByID,
+	create,
+	getAll,
+	byID,
+	download,
+	addTransaction,
+	ItemsByID,
 } = require("../../controllers/order");
 const { query } = require("../../middleware/query");
 const router = express.Router();
@@ -50,10 +50,10 @@ router.route("/").post(protect, create);
  *        name: sale_type
  *        type: string
  *      - in: query
- *        name: fromDate
+ *        name: from_date
  *        type: date
  *      - in: query
- *        name: toDate
+ *        name: to_date
  *        type: date
  *    responses:
  *      200:
