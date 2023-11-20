@@ -39,6 +39,10 @@ var orderSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		delivery_charge: {
+			type: Number,
+			default: 0,
+		},
 		total: {
 			type: Number,
 			required: [true, "Please Provide Price"], // If Required
@@ -149,6 +153,8 @@ module.exports = Order;
  *           paid:
  *             type: number
  *       discount:
+ *         type: number
+ *       delivery_charge:
  *         type: number
  *
  */
