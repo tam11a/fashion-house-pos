@@ -211,7 +211,7 @@ exports.download = async (req, res, next) => {
 				"Recipient Phone": doc.customer?.phone,
 				"Recipient Address": doc.customer?.address,
 				Note: " ",
-				"COD Amount": doc.total + doc.delivery_charge - doc.discount - doc.paid,
+				"COD Amount": doc?.due,
 			};
 		};
 

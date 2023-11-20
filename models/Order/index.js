@@ -93,7 +93,7 @@ orderSchema.virtual("paid").get(function () {
 
 orderSchema.virtual("due").get(function () {
 	const paid = this.transaction.reduce((a, b) => a + b.amount, 0);
-	return this.total - paid - this.discount;
+	return this.total + this.delivery_charge - paid - this.discount;
 });
 
 orderSchema.set("toObject", { virtuals: true });
