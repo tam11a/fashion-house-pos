@@ -268,6 +268,81 @@ exports.byID = async (req, res, next) => {
 	}
 };
 
+exports.invoiceByID = async (req, res, next) => {
+	// Get order_id
+	const { order_id } = req.params;
+
+	// mongoose.Types.ObjectId.isValid(id)
+	if (!order_id || !mongoose.Types.ObjectId.isValid(order_id))
+		return next(new ErrorResponse("Please provide valid order id", 400));
+
+	try {
+		const order = await Order.findById(order_id).populate([
+			{
+				path: "customer",
+			},
+			{
+				path: "branch",
+			},
+			{
+				path: "salesman",
+				select: "firstName lastName userName",
+			},
+		]);
+
+		if (!order) return next(new ErrorResponse("No order found", 404));
+
+		const items = await Item.find({
+			$or: [
+				{ ...queryObjectBuilder(order_id, ["orderLine.order"], false, true) },
+				{
+					return: {
+						$elemMatch: {
+							order: order_id,
+						},
+					},
+				},
+			],
+		}).populate([
+			{
+				path: "product",
+				populate: [
+					{
+						path: "category",
+					},
+					{
+						path: "subcategory",
+					},
+				],
+			},
+			"shipment",
+			"branch",
+			"orderLine",
+			{
+				path: "stitch",
+				populate: [
+					{
+						path: "tailor",
+					},
+				],
+			},
+		]);
+
+		res.status(200).json({
+			success: true,
+			data: {
+				...order._doc,
+				products: items,
+			},
+		});
+
+		// On Error
+	} catch (error) {
+		// Send Error Response
+		next(error);
+	}
+};
+
 exports.ItemsByID = async (req, res, next) => {
 	// Get Values
 	const { order_id } = req.params;

@@ -7,6 +7,7 @@ const {
 	download,
 	addTransaction,
 	ItemsByID,
+	invoiceByID,
 } = require("../../controllers/order");
 const { query } = require("../../middleware/query");
 const router = express.Router();
@@ -178,6 +179,30 @@ router.route("/orderlines/:order_id").get(ItemsByID);
  *
  */
 router.route("/:order_id").get(byID);
+
+// Get Order API
+/**
+ * @swagger
+ * /api/order/{id}/invoice:
+ *  get:
+ *    tags: [Order]
+ *    summary: Get Order Invoice Details
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: Order Id
+ *    responses:
+ *      200:
+ *        description: Get successful
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *
+ */
+router.route("/:order_id/invoice").get(invoiceByID);
 
 // Get Order API
 /**
