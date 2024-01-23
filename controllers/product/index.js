@@ -72,10 +72,9 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 	// Get Values
-	const { name, description, category, subcategory, price } = req.body;
+	const { name, description, category, subcategory, price, barcode } = req.body;
 
 	try {
-		const barcode = await generate();
 		// Store Admin to DB
 		const product = await Product.create({
 			name,
@@ -83,7 +82,7 @@ exports.create = async (req, res, next) => {
 			category,
 			subcategory,
 			price,
-			barcode,
+			barcode: barcode || (await generate()),
 			...req.createdBy,
 		});
 
@@ -107,7 +106,7 @@ exports.update = async (req, res, next) => {
 	if (!product_id || !mongoose.Types.ObjectId.isValid(product_id))
 		return next(new ErrorResponse("Please provide valid product id", 400));
 
-	const { name, description, category, subcategory, price } = req.body;
+	const { name, description, category, subcategory, price, barcode } = req.body;
 
 	try {
 		// Update product to DB
@@ -117,6 +116,7 @@ exports.update = async (req, res, next) => {
 			category,
 			subcategory,
 			price,
+			barcode,
 			...req.updatedBy,
 		});
 

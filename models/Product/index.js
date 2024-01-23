@@ -80,6 +80,8 @@ module.exports = Product;
  *         type: string
  *       price:
  *         type: number
+ *       barcode:
+ *         type: string
  */
 
 /**
@@ -99,4 +101,6 @@ module.exports = Product;
  *         type: string
  *       price:
  *         type: number
+ *       barcode:
+ *         type: string
  */
