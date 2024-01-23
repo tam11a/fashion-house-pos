@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 # update npm to the latest minor version
 RUN npm install -g npm
